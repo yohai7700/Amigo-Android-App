@@ -2,6 +2,7 @@ package com.example.amigo.Activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
 
@@ -47,7 +48,7 @@ public class MatchResultsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_results);
-        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setTitle("Set Match");
         //region retrieve data
         Intent intent = getIntent();
@@ -55,7 +56,7 @@ public class MatchResultsActivity extends AppCompatActivity {
         bluePlayers = (List<Player>) intent.getSerializableExtra(EXTRA_BLUE_PLAYERS);
         redGoalsNumber = blueGoalsNumber = 0;
         //endregion
-        //region sets textviews
+        //region sets text views
         final MaterialTextView score = findViewById(R.id.game_score);
         String gameScore = redGoalsNumber + " - " + blueGoalsNumber;
         score.setText(gameScore);
