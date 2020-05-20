@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Amigo</string>
+    <string name="creation_date_msg">Created on:</string>
+    <string name="add_player_title">Add player to the group</string>
+    <string name="player_name_column">name</string>
+    <string name="rating_column">Pts</string>
+    <string name="games_column">G</string>
+    <string name="wins_column">W</string>
+    <string name="losses_column">L</string>
+    <string name="goals_column">Gls</string>
+    <string name="assists_column">A</string>
+    <string name="red_team_name">Red Team</string>
+    <string name="blue_team_name">Blue Team</string>
+    <string name="finish_match_button_text">Finish Match</string>
+    <string name="goal_button_Message">Please click on the player who scored the goal</string>
+    <string name="assist_button_Message">Please click on the player who assisted to score the goal</string>
+    <string name="created_on">Created on:</string>
+
+</resources>

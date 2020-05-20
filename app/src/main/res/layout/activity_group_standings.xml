@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.GroupStandingsActivity">
+
+    <RelativeLayout
+        android:id="@+id/standings_columns_relative_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingVertical="2dp">
+
+        <TextView
+            android:id="@+id/player_name_column"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginEnd="2dp"
+            android:layout_marginRight="2dp"
+            android:layout_toStartOf="@+id/rating_number_column"
+            android:layout_toLeftOf="@+id/rating_number_column"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingStart="60dp"
+            android:paddingLeft="60dp"
+            android:text="@string/player_name_column"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+            android:textColor="#000000"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/rating_number_column"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@id/games_number_column"
+            android:layout_toLeftOf="@id/games_number_column"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingHorizontal="10dp"
+            android:text="@string/rating_column"
+            android:textColor="#000000"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/games_number_column"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@id/wins_number_column"
+            android:layout_toLeftOf="@id/wins_number_column"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingHorizontal="21dp"
+            android:text="@string/games_column"
+            android:textColor="#000000"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/wins_number_column"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@id/losses_number_column"
+            android:layout_toLeftOf="@id/losses_number_column"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingHorizontal="15dp"
+            android:text="@string/wins_column"
+            android:textColor="#000000"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/losses_number_column"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@id/goals_number_column"
+            android:layout_toLeftOf="@id/goals_number_column"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingHorizontal="20dp"
+            android:text="@string/losses_column"
+            android:textColor="#000000"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/goals_number_column"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@id/assists_number_column"
+            android:layout_toLeftOf="@id/assists_number_column"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingHorizontal="11dp"
+            android:text="@string/goals_column"
+            android:textColor="#000000"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/assists_number_column"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingLeft="20dp"
+            android:paddingRight="50dp"
+            android:text="@string/assists_column"
+            android:textColor="#000000"
+            android:textSize="22sp" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/standings_columns_relative_layout">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/standings_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/grass_field"
+            tools:listitem="@layout/standings_item" />
+    </RelativeLayout>
+    <!-- remember Image by <a href="https://pixabay.com/users/OpenClipart-Vectors-30363/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=145794">OpenClipart-Vectors</a> from <a href="https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=145794">Pixabay</a> -->
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/play_game_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="50dp"
+        android:src="@drawable/ic_football" />
+    <!-- remember credit https://www.flaticon.com/free-icon/football_1165187 -->
+
+</RelativeLayout>

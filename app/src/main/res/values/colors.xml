@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="greenPrimary">#007c21</color>
+    <color name="greenPrimaryDark">#006c11</color>
+    <color name="turquoiseAccent">#008b80</color>
+    <color name="whitePrimary">#FFFFFF</color>
+    <color name="standingsRowGrey">#CFD8DC</color>
+    <color name="redTeamColor">#C72C1C</color>
+    <color name="blueTeamColor">#0057a0</color>
+    <color name="checkBoxDefaultColor">#757575</color>
+    <color name="standingsRowGreyOpacity">#7FCFD8DC</color>
+    <color name="standingsRowEdited">#0287d0</color>
+    <color name="very_dark_overlay">#9929303F</color>
+    <color name="very_light_overlay">#99FFFFFF</color>
+    <color name="dark_overlay">#B0808080</color>
+    <color name="light_overlay">#B0ecf0f1</color>
+    <color name="star_yellow">#F39C12</color>
+    <color name="add_image_background">#c5d5d6</color>
+    <color name="add_image_tint">#0057a0</color>
+</resources>
