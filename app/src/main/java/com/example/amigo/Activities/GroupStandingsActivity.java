@@ -40,7 +40,7 @@ public class GroupStandingsActivity extends AppCompatActivity {
 
     public static final String STATE_GROUP_ID = "GROUP_ID";
 
-    public static final int ADD_STANDINGS_REQUEST = 1, RUN_GAME_REQUEST = 2;
+    public static final int RUN_GAME_REQUEST = 1;
 
     private int groupID;
     private GroupStandingsViewModel groupStandingsViewModel;
@@ -50,11 +50,11 @@ public class GroupStandingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_standings);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         Log.d("TAG", "Standings has been created");
         //region gets Data
         Intent intent = getIntent();
         setTitle(intent.getStringExtra(EXTRA_GROUP_TITLE));
+
         groupID = intent.getIntExtra(EXTRA_GROUP_ID, -1);
         //endregion
         //region sets FAB
@@ -107,6 +107,12 @@ public class GroupStandingsActivity extends AppCompatActivity {
             }
         });
         //endregion
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("TAG", "Standings has been destroyed.");
     }
 
     @Override
@@ -178,7 +184,7 @@ public class GroupStandingsActivity extends AppCompatActivity {
     private void addPlayer() {
         Intent intent = new Intent(GroupStandingsActivity.this, AddStandingsActivity.class);
         intent.putExtra(AddStandingsActivity.EXTRA_GROUP_ID, groupID);
-        startActivityForResult(intent, ADD_STANDINGS_REQUEST);
+        startActivity(intent);
     }
 
     //assumes 2 teams
@@ -204,13 +210,13 @@ public class GroupStandingsActivity extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(STATE_GROUP_ID, groupID);
-        Log.d("TAG","Saving group" + groupID);
+        Log.d("RESTORE","Saving group" + groupID);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         groupID = savedInstanceState.getInt(STATE_GROUP_ID, -1);
-        Log.d("TAG","Restoring group" + groupID);
+        Log.d("RESTORE","Restoring group" + groupID);
     }
 }

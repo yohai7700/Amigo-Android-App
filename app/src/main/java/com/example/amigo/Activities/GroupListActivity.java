@@ -26,10 +26,9 @@ import androidx.recyclerview.widget.RecyclerView;
 public class GroupListActivity extends AppCompatActivity {
 
     public static final int ADD_GROUP_REQUEST = 1, EDIT_GROUP_REQUEST = 2;
-    enum State{GROUP_ID}
 
     private GroupViewModel groupViewModel;
-    private boolean shouldAskOnDelete;
+    private boolean shouldAskOnDelete = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
