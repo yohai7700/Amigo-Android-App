@@ -38,8 +38,8 @@
         <activity
             android:name=".Activities.GroupStandingsActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="landscape"
-            android:parentActivityName=".Activities.GroupListActivity" />
+            android:parentActivityName=".Activities.GroupListActivity"
+            tools:ignore="LockedOrientationActivity" />
     </application>
 
 </manifest>

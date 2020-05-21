@@ -45,18 +45,20 @@ public class GroupStandingsActivity extends AppCompatActivity {
     private int groupID;
     private GroupStandingsViewModel groupStandingsViewModel;
     private List<StandingsDetail> standings;
-    @SuppressLint("SourceLockedOrientationActivity")
+    //@SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //region gets Data
+        Log.d("TAG", "Receives data");
+        Intent intent = getIntent();
+        setTitle(intent.getStringExtra(EXTRA_GROUP_TITLE));
+        groupID = intent.getIntExtra(EXTRA_GROUP_ID, -1);
+        if(savedInstanceState != null)
+            groupID = savedInstanceState.getInt(STATE_GROUP_ID);
+        //endregion
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_standings);
         Log.d("TAG", "Standings has been created");
-        //region gets Data
-        Intent intent = getIntent();
-        setTitle(intent.getStringExtra(EXTRA_GROUP_TITLE));
-
-        groupID = intent.getIntExtra(EXTRA_GROUP_ID, -1);
-        //endregion
         //region sets FAB
         FloatingActionButton playGameFABtn = (findViewById(R.id.play_game_button));
         playGameFABtn.setOnClickListener(new View.OnClickListener() {
@@ -210,13 +212,13 @@ public class GroupStandingsActivity extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(STATE_GROUP_ID, groupID);
-        Log.d("RESTORE","Saving group" + groupID);
+        Log.d("TAG","Saving group" + groupID);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         groupID = savedInstanceState.getInt(STATE_GROUP_ID, -1);
-        Log.d("RESTORE","Restoring group" + groupID);
+        Log.d("TAG","Restoring group" + groupID);
     }
 }
