@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
@@ -20,7 +21,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.amigo.R;
 import com.example.amigo.StatsViewModel.StatsRepository.Entity.Group;
 import com.example.amigo.StatsViewModel.ViewModel.GroupViewModel;
-import com.example.amigo.Utility.PictureLoading;
+import com.example.amigo.Utility.PictureHandling;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
 
@@ -31,6 +32,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class AddEditGroupActivity extends AppCompatActivity {
 
     public static final String EXTRA_GROUP_ID = "com.example.amigo.Activities.AddEditGroupActivity.EXTRA_GROUP_ID";
+    public static final int DEFAULT_GROUP_PHOTO = R.drawable.add_a_photo;
 
     private TextInputEditText editTextTitle;
     private TextInputEditText editTextDescription;
@@ -60,7 +62,7 @@ public class AddEditGroupActivity extends AppCompatActivity {
         pickPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PictureLoading.startGalleryForResult(AddEditGroupActivity.this);
+                PictureHandling.startGalleryForResult(AddEditGroupActivity.this);
             }
         });
 
@@ -100,14 +102,13 @@ public class AddEditGroupActivity extends AppCompatActivity {
 
         int id = getIntent().getIntExtra(EXTRA_GROUP_ID, -1); //only passing id if it's edit so that it will update and not add
 
-        Bitmap bitmap = iconUri != null ? BitmapFactory.decodeFile(PictureLoading.getPicturePath(this, iconUri)) : BitmapFactory.decodeResource(getResources(),R.drawable.add_a_photo);
+        Bitmap bitmap = PictureHandling.getCompressedBitmap(this, iconUri, DEFAULT_GROUP_PHOTO);
         if (id != -1) {
             Group group = new Group(title, description, bitmap);
             group.id = id;
             groupViewModel.update(group);
         } else
             groupViewModel.insert(new Group(title, description, bitmap));
-
         finish();
     }
 
@@ -134,9 +135,9 @@ public class AddEditGroupActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
-                case PictureLoading.PICK_IMAGE_REQUEST:
+                case PictureHandling.PICK_IMAGE_REQUEST:
                     iconUri = data.getData();
-                    Bitmap pictureBM = BitmapFactory.decodeFile(PictureLoading.getPicturePath(this, iconUri));
+                    Bitmap pictureBM = BitmapFactory.decodeFile(PictureHandling.getPicturePath(this, iconUri));
                     pickPhotoButton.setImageDrawable(new BitmapDrawable(getResources(), pictureBM));
                     break;
                 default:
@@ -144,5 +145,12 @@ public class AddEditGroupActivity extends AppCompatActivity {
             }
         }
     }
-
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case PictureHandling.MY_PERMISSIONS_READ_EXTERNAL_STORAGE:
+                PictureHandling.tryOpenGallery(AddEditGroupActivity.this);
+        }
+    }
 }

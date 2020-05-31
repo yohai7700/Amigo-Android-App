@@ -1,8 +1,6 @@
 package com.example.amigo.Activities;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +9,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.amigo.Adapter.GroupStandingsDetailAdapter;
 import com.example.amigo.R;
@@ -24,14 +30,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class GroupStandingsActivity extends AppCompatActivity {
 
@@ -48,17 +46,15 @@ public class GroupStandingsActivity extends AppCompatActivity {
     //@SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_group_standings);
+        Log.d("TAG", "Standings has been created");
         //region gets Data
         Log.d("TAG", "Receives data");
         Intent intent = getIntent();
         setTitle(intent.getStringExtra(EXTRA_GROUP_TITLE));
         groupID = intent.getIntExtra(EXTRA_GROUP_ID, -1);
-        if(savedInstanceState != null)
-            groupID = savedInstanceState.getInt(STATE_GROUP_ID);
-        //endregion
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_group_standings);
-        Log.d("TAG", "Standings has been created");
+        //endregion;
         //region sets FAB
         FloatingActionButton playGameFABtn = (findViewById(R.id.play_game_button));
         playGameFABtn.setOnClickListener(new View.OnClickListener() {

@@ -6,14 +6,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-public class PictureLoading {
-    public static final int PICK_IMAGE_REQUEST = 1, MY_PERMISSIONS_READ_EXTERNAL_STORAGE = 2;
+import java.io.File;
+import java.io.IOException;
+
+import id.zelory.compressor.Compressor;
+
+public class PictureHandling {
+    public static final int PICK_IMAGE_REQUEST = 1, MY_PERMISSIONS_READ_EXTERNAL_STORAGE = 2,
+            BITMAP_MAX_SIZE = 1000000;
 
     public static String getPicturePath(Context context,  Uri uri){
         //region get icon image by URI
@@ -35,7 +43,7 @@ public class PictureLoading {
             //request the permission
             ActivityCompat.requestPermissions(activity,
                     new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    PictureLoading.MY_PERMISSIONS_READ_EXTERNAL_STORAGE);
+                    PictureHandling.MY_PERMISSIONS_READ_EXTERNAL_STORAGE);
             /*  MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 app-defined int constant. The callback method gets the
                 result of the request.*/
@@ -54,8 +62,15 @@ public class PictureLoading {
         Intent photoPick = new Intent(
                 Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        activity.startActivityForResult(photoPick, PictureLoading.PICK_IMAGE_REQUEST);
+        activity.startActivityForResult(photoPick, PictureHandling.PICK_IMAGE_REQUEST);
     }
 
-
+    public static Bitmap getCompressedBitmap(Context context, Uri uri, int drawableDefault){
+        try {
+            return new Compressor(context).setMaxHeight(720).setMaxWidth(1280).compressToBitmap(new File(getPicturePath(context, uri)));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return BitmapFactory.decodeResource(context.getResources(), drawableDefault);
+        }
+    }
 }

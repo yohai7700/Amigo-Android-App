@@ -17,12 +17,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.amigo.R;
-import com.example.amigo.Utility.PictureLoading;
+import com.example.amigo.Utility.PictureHandling;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 public class AddPlayerActivity extends AppCompatActivity {
-    public static final int PICK_IMAGE_REQUEST = 1, MY_PERMISSIONS_READ_EXTERNAL_STORAGE = 2;
 
     public static final String EXTRA_PLAYER_FIRST_NAME = "com.example.amigo.Activities.AddEditGroupActivity.EXTRA_PLAYER_FIRST_NAME";
     public static final String EXTRA_PLAYER_LAST_NAME = "com.example.amigo.Activities.AddEditGroupActivity.EXTRA_PLAYER_LAST_NAME";
@@ -91,7 +90,7 @@ public class AddPlayerActivity extends AppCompatActivity {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PictureLoading.startGalleryForResult(AddPlayerActivity.this);
+                PictureHandling.startGalleryForResult(AddPlayerActivity.this);
             }
         };
     }
@@ -102,9 +101,9 @@ public class AddPlayerActivity extends AppCompatActivity {
         if(resultCode != RESULT_OK)
             return;
         switch(requestCode){
-            case PictureLoading.PICK_IMAGE_REQUEST:
+            case PictureHandling.PICK_IMAGE_REQUEST:
                 pictureUri = data.getData();
-                Bitmap pictureBM = BitmapFactory.decodeFile(PictureLoading.getPicturePath(this, pictureUri));
+                Bitmap pictureBM = BitmapFactory.decodeFile(PictureHandling.getPicturePath(this, pictureUri));
                 buttonPicture.setImageDrawable(new BitmapDrawable(getResources(), pictureBM));
                 break;
             default:
@@ -116,8 +115,8 @@ public class AddPlayerActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode){
-            case MY_PERMISSIONS_READ_EXTERNAL_STORAGE:
-                PictureLoading.tryOpenGallery(AddPlayerActivity.this);
+            case PictureHandling.MY_PERMISSIONS_READ_EXTERNAL_STORAGE:
+                PictureHandling.tryOpenGallery(AddPlayerActivity.this);
         }
     }
 }

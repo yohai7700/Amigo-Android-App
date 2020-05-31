@@ -48,7 +48,7 @@ public class PlayerAdapter extends ListAdapter<Player, PlayerAdapter.PlayerHolde
     @Override
     public void onBindViewHolder(@NonNull PlayerHolder holder, int position) {
         Player currentPlayer = getItem(position);
-        String name = currentPlayer.getFirstName() + " " + currentPlayer.getLastName();
+        String name = currentPlayer.getFirstName();
         holder.textViewName.setText(name);
         holder.imgPicture.setImageDrawable(new BitmapDrawable(Resources.getSystem(), currentPlayer.getPicture()));
     }
@@ -63,7 +63,7 @@ public class PlayerAdapter extends ListAdapter<Player, PlayerAdapter.PlayerHolde
         private CircularImageView imgPicture;
 
 
-        public PlayerHolder(@NonNull View itemView) {
+        private PlayerHolder(@NonNull View itemView) {
             super(itemView);
             textViewName = itemView.findViewById(R.id.player_name);
             imgPicture = itemView.findViewById(R.id.player_picture);
