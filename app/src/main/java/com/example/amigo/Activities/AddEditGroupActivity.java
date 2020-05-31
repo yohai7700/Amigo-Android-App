@@ -33,6 +33,7 @@ public class AddEditGroupActivity extends AppCompatActivity {
 
     public static final String EXTRA_GROUP_ID = "com.example.amigo.Activities.AddEditGroupActivity.EXTRA_GROUP_ID";
     public static final int DEFAULT_GROUP_PHOTO = R.drawable.add_a_photo;
+    public static final String STATE_ICON_URI = "STATE_ICON_URI";
 
     private TextInputEditText editTextTitle;
     private TextInputEditText editTextDescription;
@@ -101,7 +102,7 @@ public class AddEditGroupActivity extends AppCompatActivity {
         }
 
         int id = getIntent().getIntExtra(EXTRA_GROUP_ID, -1); //only passing id if it's edit so that it will update and not add
-
+        Bitmap check = BitmapFactory.decodeFile(PictureHandling.getPicturePath(this, iconUri));
         Bitmap bitmap = PictureHandling.getCompressedBitmap(this, iconUri, DEFAULT_GROUP_PHOTO);
         if (id != -1) {
             Group group = new Group(title, description, bitmap);
@@ -136,15 +137,20 @@ public class AddEditGroupActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case PictureHandling.PICK_IMAGE_REQUEST:
-                    iconUri = data.getData();
-                    Bitmap pictureBM = BitmapFactory.decodeFile(PictureHandling.getPicturePath(this, iconUri));
-                    pickPhotoButton.setImageDrawable(new BitmapDrawable(getResources(), pictureBM));
+                    setIcon(data.getData());
                     break;
                 default:
                     Toast.makeText(getApplicationContext(), "Couldn't get photo", Toast.LENGTH_SHORT).show();
             }
         }
     }
+
+    private void setIcon(Uri uri){
+        iconUri = uri;
+        Bitmap pictureBM = BitmapFactory.decodeFile(PictureHandling.getPicturePath(this, iconUri));
+        pickPhotoButton.setImageDrawable(new BitmapDrawable(getResources(), pictureBM));
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -152,5 +158,19 @@ public class AddEditGroupActivity extends AppCompatActivity {
             case PictureHandling.MY_PERMISSIONS_READ_EXTERNAL_STORAGE:
                 PictureHandling.tryOpenGallery(AddEditGroupActivity.this);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(STATE_ICON_URI, iconUri);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        iconUri = savedInstanceState.getParcelable(STATE_ICON_URI);
+        if(iconUri != null)
+            setIcon(iconUri);
     }
 }

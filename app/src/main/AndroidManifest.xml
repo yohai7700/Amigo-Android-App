@@ -18,7 +18,7 @@
         <activity android:name=".Activities.TeamAssignmentActivity"
             android:parentActivityName=".Activities.GroupStandingsActivity"/>
         <activity
-            android:name=".Activities.AddPlayerActivity"
+            android:name=".Activities.AddEditPlayerActivity"
             android:parentActivityName=".Activities.AddStandingsActivity" />
         <activity
             android:name=".Activities.AddStandingsActivity"

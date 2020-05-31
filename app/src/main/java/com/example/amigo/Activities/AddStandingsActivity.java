@@ -49,7 +49,7 @@ public class AddStandingsActivity extends AppCompatActivity {
         buttonAddPlayer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AddStandingsActivity.this, AddPlayerActivity.class);
+                Intent intent = new Intent(AddStandingsActivity.this, AddEditPlayerActivity.class);
                 startActivityForResult(intent, ADD_PLAYER_REQUEST);
             }
         });
@@ -107,9 +107,9 @@ public class AddStandingsActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_PLAYER_REQUEST && resultCode == RESULT_OK) {
             //region inserts new player
-            String fName = data.getStringExtra(AddPlayerActivity.EXTRA_PLAYER_FIRST_NAME);
-            String lName = data.getStringExtra(AddPlayerActivity.EXTRA_PLAYER_LAST_NAME);
-            Uri pictureUri = data.getParcelableExtra(AddPlayerActivity.EXTRA_PLAYER_PICTURE_URI);
+            String fName = data.getStringExtra(AddEditPlayerActivity.EXTRA_PLAYER_FIRST_NAME);
+            String lName = data.getStringExtra(AddEditPlayerActivity.EXTRA_PLAYER_LAST_NAME);
+            Uri pictureUri = data.getParcelableExtra(AddEditPlayerActivity.EXTRA_PLAYER_PICTURE_URI);
             Bitmap pictureBM = PictureHandling.getCompressedBitmap(this, pictureUri, DEFAULT_PLAYER_PHOTO);
             Player newPlayer = new Player(fName, lName, pictureBM);
             playerViewModel.insert(newPlayer);
@@ -117,5 +117,4 @@ public class AddStandingsActivity extends AppCompatActivity {
         } else
             Toast.makeText(getApplicationContext(), "Can't add player", Toast.LENGTH_SHORT).show();
     }
-
 }

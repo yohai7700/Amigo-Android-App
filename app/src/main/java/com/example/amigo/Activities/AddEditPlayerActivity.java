@@ -21,11 +21,12 @@ import com.example.amigo.Utility.PictureHandling;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
-public class AddPlayerActivity extends AppCompatActivity {
+public class AddEditPlayerActivity extends AppCompatActivity {
 
     public static final String EXTRA_PLAYER_FIRST_NAME = "com.example.amigo.Activities.AddEditGroupActivity.EXTRA_PLAYER_FIRST_NAME";
     public static final String EXTRA_PLAYER_LAST_NAME = "com.example.amigo.Activities.AddEditGroupActivity.EXTRA_PLAYER_LAST_NAME";
     public static final String EXTRA_PLAYER_PICTURE_URI = "com.example.amigo.Activities.AddEditGroupActivity.EXTRA_PLAYER_PICTURE_URI";
+    public static final String STATE_PICTURE_URI = "STATE_PICTURE_URI";
 
     private TextInputEditText editTextFirstName;
     private TextInputEditText editTextLastName;
@@ -90,7 +91,7 @@ public class AddPlayerActivity extends AppCompatActivity {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PictureHandling.startGalleryForResult(AddPlayerActivity.this);
+                PictureHandling.startGalleryForResult(AddEditPlayerActivity.this);
             }
         };
     }
@@ -116,7 +117,7 @@ public class AddPlayerActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode){
             case PictureHandling.MY_PERMISSIONS_READ_EXTERNAL_STORAGE:
-                PictureHandling.tryOpenGallery(AddPlayerActivity.this);
+                PictureHandling.tryOpenGallery(AddEditPlayerActivity.this);
         }
     }
 }
