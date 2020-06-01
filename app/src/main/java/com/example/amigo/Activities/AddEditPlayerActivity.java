@@ -103,13 +103,19 @@ public class AddEditPlayerActivity extends AppCompatActivity {
             return;
         switch(requestCode){
             case PictureHandling.PICK_IMAGE_REQUEST:
-                pictureUri = data.getData();
-                Bitmap pictureBM = BitmapFactory.decodeFile(PictureHandling.getPicturePath(this, pictureUri));
-                buttonPicture.setImageDrawable(new BitmapDrawable(getResources(), pictureBM));
+                setPicture(data.getData());
                 break;
             default:
                 Toast.makeText(getApplicationContext(), "Couldn't get photo", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void setPicture(Uri uri){
+        if(uri == null)
+            return;
+        pictureUri = uri;
+        Bitmap pictureBM = BitmapFactory.decodeFile(PictureHandling.getPicturePath(this, pictureUri));
+        buttonPicture.setImageDrawable(new BitmapDrawable(getResources(), pictureBM));
     }
 
     @Override
@@ -119,5 +125,17 @@ public class AddEditPlayerActivity extends AppCompatActivity {
             case PictureHandling.MY_PERMISSIONS_READ_EXTERNAL_STORAGE:
                 PictureHandling.tryOpenGallery(AddEditPlayerActivity.this);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(STATE_PICTURE_URI, pictureUri);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        setPicture((Uri)savedInstanceState.getParcelable(STATE_PICTURE_URI));
     }
 }

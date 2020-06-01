@@ -1,21 +1,20 @@
 package com.example.amigo.StatsViewModel.StatsRepository.Dao;
 
-import com.example.amigo.StatsViewModel.StatsRepository.Entity.Group;
-
-import java.util.List;
-
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
+
+import com.example.amigo.StatsViewModel.StatsRepository.Entity.Group;
+
+import java.util.List;
 
 @Dao
 public interface GroupDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert
     public void insert(Group group);
 
     @Update

@@ -102,6 +102,7 @@ public class AddEditGroupActivity extends AppCompatActivity {
         }
 
         int id = getIntent().getIntExtra(EXTRA_GROUP_ID, -1); //only passing id if it's edit so that it will update and not add
+
         Bitmap check = BitmapFactory.decodeFile(PictureHandling.getPicturePath(this, iconUri));
         Bitmap bitmap = PictureHandling.getCompressedBitmap(this, iconUri, DEFAULT_GROUP_PHOTO);
         if (id != -1) {
@@ -146,6 +147,8 @@ public class AddEditGroupActivity extends AppCompatActivity {
     }
 
     private void setIcon(Uri uri){
+        if(uri == null)
+            return;
         iconUri = uri;
         Bitmap pictureBM = BitmapFactory.decodeFile(PictureHandling.getPicturePath(this, iconUri));
         pickPhotoButton.setImageDrawable(new BitmapDrawable(getResources(), pictureBM));
@@ -169,8 +172,6 @@ public class AddEditGroupActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        iconUri = savedInstanceState.getParcelable(STATE_ICON_URI);
-        if(iconUri != null)
-            setIcon(iconUri);
+        setIcon((Uri)savedInstanceState.getParcelable(STATE_ICON_URI));
     }
 }

@@ -110,6 +110,7 @@ public class AddStandingsActivity extends AppCompatActivity {
             String fName = data.getStringExtra(AddEditPlayerActivity.EXTRA_PLAYER_FIRST_NAME);
             String lName = data.getStringExtra(AddEditPlayerActivity.EXTRA_PLAYER_LAST_NAME);
             Uri pictureUri = data.getParcelableExtra(AddEditPlayerActivity.EXTRA_PLAYER_PICTURE_URI);
+
             Bitmap pictureBM = PictureHandling.getCompressedBitmap(this, pictureUri, DEFAULT_PLAYER_PHOTO);
             Player newPlayer = new Player(fName, lName, pictureBM);
             playerViewModel.insert(newPlayer);
