@@ -12,20 +12,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
+import com.example.amigo.Handler.PermissionsHandler;
+import com.example.amigo.Handler.PictureHandler;
+import com.example.amigo.Handler.RequestHandler;
 import com.example.amigo.R;
 import com.example.amigo.StatsViewModel.StatsRepository.Entity.Group;
 import com.example.amigo.StatsViewModel.ViewModel.GroupViewModel;
-import com.example.amigo.Utility.PictureLoading;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.text.DateFormat;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AddEditGroupActivity extends AppCompatActivity {
@@ -60,7 +62,7 @@ public class AddEditGroupActivity extends AppCompatActivity {
         pickPhotoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PictureLoading.startGalleryForResult(AddEditGroupActivity.this);
+                PictureHandler.openGalleryPermission(AddEditGroupActivity.this);
             }
         });
 
@@ -100,7 +102,7 @@ public class AddEditGroupActivity extends AppCompatActivity {
 
         int id = getIntent().getIntExtra(EXTRA_GROUP_ID, -1); //only passing id if it's edit so that it will update and not add
 
-        Bitmap bitmap = iconUri != null ? BitmapFactory.decodeFile(PictureLoading.getPicturePath(this, iconUri)) : BitmapFactory.decodeResource(getResources(),R.drawable.add_a_photo);
+        Bitmap bitmap = iconUri != null ? BitmapFactory.decodeFile(PictureHandler.getPicturePath(this, iconUri)) : null;
         if (id != -1) {
             Group group = new Group(title, description, bitmap);
             group.id = id;
@@ -134,14 +136,24 @@ public class AddEditGroupActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
-                case PictureLoading.PICK_IMAGE_REQUEST:
-                    iconUri = data.getData();
-                    Bitmap pictureBM = BitmapFactory.decodeFile(PictureLoading.getPicturePath(this, iconUri));
-                    pickPhotoButton.setImageDrawable(new BitmapDrawable(getResources(), pictureBM));
-                    break;
+                case RequestHandler.PICK_IMAGE_REQUEST:
+                    if(data.getData() != null) {
+                        iconUri = data.getData();
+                        Bitmap pictureBM = BitmapFactory.decodeFile(PictureHandler.getPicturePath(this, iconUri));
+                        pickPhotoButton.setImageDrawable(new BitmapDrawable(getResources(), pictureBM));
+                        break;
+                    }
                 default:
                     Toast.makeText(getApplicationContext(), "Couldn't get photo", Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case PermissionsHandler.MY_PERMISSIONS_READ_EXTERNAL_STORAGE:
+                PictureHandler.tryOpenGallery(AddEditGroupActivity.this);
         }
     }
 

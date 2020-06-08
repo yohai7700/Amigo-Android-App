@@ -23,7 +23,7 @@ import com.example.amigo.StatsViewModel.StatsRepository.Entity.Player;
 import com.example.amigo.StatsViewModel.StatsRepository.Entity.Standings;
 import com.example.amigo.StatsViewModel.ViewModel.PlayerViewModel;
 import com.example.amigo.StatsViewModel.ViewModel.StandingsViewModel;
-import com.example.amigo.Utility.PictureLoading;
+import com.example.amigo.Handler.PictureHandler;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
@@ -50,7 +50,7 @@ public class AddStandingsActivity extends AppCompatActivity {
         buttonAddPlayer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AddStandingsActivity.this, AddPlayerActivity.class);
+                Intent intent = new Intent(AddStandingsActivity.this, AddEditPlayerActivity.class);
                 startActivityForResult(intent, ADD_PLAYER_REQUEST);
             }
         });
@@ -108,11 +108,11 @@ public class AddStandingsActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_PLAYER_REQUEST && resultCode == RESULT_OK) {
             //region inserts new player
-            String fName = data.getStringExtra(AddPlayerActivity.EXTRA_PLAYER_FIRST_NAME);
-            String lName = data.getStringExtra(AddPlayerActivity.EXTRA_PLAYER_LAST_NAME);
-            Uri pictureUri = data.getParcelableExtra(AddPlayerActivity.EXTRA_PLAYER_PICTURE_URI);
+            String fName = data.getStringExtra(AddEditPlayerActivity.EXTRA_PLAYER_FIRST_NAME);
+            String lName = data.getStringExtra(AddEditPlayerActivity.EXTRA_PLAYER_LAST_NAME);
+            Uri pictureUri = data.getParcelableExtra(AddEditPlayerActivity.EXTRA_PLAYER_PICTURE_URI);
             Bitmap pictureBM = pictureUri == null ? BitmapFactory.decodeResource(getResources(), R.drawable.stock_profile) :
-                                                    BitmapFactory.decodeFile(PictureLoading.getPicturePath(this, pictureUri));
+                                                    BitmapFactory.decodeFile(PictureHandler.getPicturePath(this, pictureUri));
 
             Player newPlayer = new Player(fName, lName, pictureBM);
             playerViewModel.insert(newPlayer);

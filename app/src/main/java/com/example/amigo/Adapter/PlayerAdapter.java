@@ -7,14 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.amigo.R;
+import com.example.amigo.StatsViewModel.StatsRepository.Entity.Player;
+import com.mikhaellopez.circularimageview.CircularImageView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.amigo.R;
-import com.example.amigo.StatsViewModel.StatsRepository.Entity.Player;
-import com.mikhaellopez.circularimageview.CircularImageView;
 
 public class PlayerAdapter extends ListAdapter<Player, PlayerAdapter.PlayerHolder> {
 
@@ -50,7 +50,10 @@ public class PlayerAdapter extends ListAdapter<Player, PlayerAdapter.PlayerHolde
         Player currentPlayer = getItem(position);
         String name = currentPlayer.getFirstName() + " " + currentPlayer.getLastName();
         holder.textViewName.setText(name);
-        holder.imgPicture.setImageDrawable(new BitmapDrawable(Resources.getSystem(), currentPlayer.getPicture()));
+        if(currentPlayer.getPicture() == null)
+            holder.imgPicture.setImageResource(R.drawable.default_profile);
+        else
+            holder.imgPicture.setImageDrawable(new BitmapDrawable(Resources.getSystem(), currentPlayer.getPicture()));
     }
 
 

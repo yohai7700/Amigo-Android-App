@@ -1,4 +1,4 @@
-package com.example.amigo.Utility;
+package com.example.amigo.Handler;
 
 import android.Manifest;
 import android.app.Activity;
@@ -12,9 +12,7 @@ import android.provider.MediaStore;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-public class PictureLoading {
-    public static final int PICK_IMAGE_REQUEST = 1, MY_PERMISSIONS_READ_EXTERNAL_STORAGE = 2;
-
+public class PictureHandler {
     public static String getPicturePath(Context context,  Uri uri){
         //region get icon image by URI
         String[] filePathColumn = {MediaStore.Images.Media.DATA};
@@ -28,19 +26,13 @@ public class PictureLoading {
         //endregion
     }
 
-    public static void startGalleryForResult(Activity activity){
-        if (ContextCompat.checkSelfPermission(activity,
-                Manifest.permission.READ_EXTERNAL_STORAGE)
+    public static void openGalleryPermission(Activity activity){
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED)
             //request the permission
-            ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    PictureLoading.MY_PERMISSIONS_READ_EXTERNAL_STORAGE);
-            /*  MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                app-defined int constant. The callback method gets the
-                result of the request.*/
-        else
-            openGalleryForResult(activity);
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    PermissionsHandler.MY_PERMISSIONS_READ_EXTERNAL_STORAGE);
+        tryOpenGallery(activity);
     }
 
     public static void tryOpenGallery(Activity activity){
@@ -54,7 +46,7 @@ public class PictureLoading {
         Intent photoPick = new Intent(
                 Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        activity.startActivityForResult(photoPick, PictureLoading.PICK_IMAGE_REQUEST);
+        activity.startActivityForResult(photoPick, RequestHandler.PICK_IMAGE_REQUEST);
     }
 
 

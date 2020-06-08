@@ -62,7 +62,9 @@ public class GroupAdapter extends ListAdapter<Group,GroupAdapter.GroupHolder> {
         holder.textViewCreationDate.setText(DateFormat.getDateInstance().format(currentGroup.getCreationDate()));
         if (currentGroup.getIcon() != null)
             holder.circleImageViewIcon.setImageBitmap(currentGroup.getIcon());
-        }
+        else
+            holder.circleImageViewIcon.setImageResource(R.drawable.default_group);
+    }
 
     public Group getGroupAt(int position){
         return getItem(position);
