@@ -25,8 +25,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class GroupListActivity extends AppCompatActivity {
 
-    public static final int ADD_GROUP_REQUEST = 1, EDIT_GROUP_REQUEST = 2;
-
     private GroupViewModel groupViewModel;
     private boolean shouldAskOnDelete = true;
 

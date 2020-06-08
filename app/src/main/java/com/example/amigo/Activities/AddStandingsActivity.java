@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.amigo.Adapter.PlayerAdapter;
 import com.example.amigo.Handler.PictureHandler;
@@ -108,15 +107,13 @@ public class AddStandingsActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_PLAYER_REQUEST && resultCode == RESULT_OK) {
             //region inserts new player
-            String fName = data.getStringExtra(AddEditPlayerActivity.EXTRA_PLAYER_FIRST_NAME);
-            String lName = data.getStringExtra(AddEditPlayerActivity.EXTRA_PLAYER_LAST_NAME);
+            String name = data.getStringExtra(AddEditPlayerActivity.EXTRA_PLAYER_NAME);
             Uri pictureUri = data.getParcelableExtra(AddEditPlayerActivity.EXTRA_PLAYER_PICTURE_URI);
-            Bitmap pictureBM = pictureUri == null ? BitmapFactory.decodeResource(getResources(), R.drawable.stock_profile) :
-                                                    BitmapFactory.decodeFile(PictureHandler.getPicturePath(this, pictureUri));
-            Player newPlayer = new Player(fName, lName, pictureBM);
+            Bitmap pictureBM = pictureUri != null ? BitmapFactory.decodeFile(PictureHandler.getPicturePath(this, pictureUri))
+                                                    : null;
+            Player newPlayer = new Player(name, pictureBM);
             playerViewModel.insert(newPlayer);
             //endregion
-        } else
-            Toast.makeText(getApplicationContext(), "Can't add player", Toast.LENGTH_SHORT).show();
+        }
     }
 }

@@ -7,14 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.amigo.R;
+import com.example.amigo.StatsViewModel.StatsRepository.InterClass.StandingsDetail;
+
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.amigo.R;
-import com.example.amigo.StatsViewModel.StatsRepository.InterClass.StandingsDetail;
 
 public class GroupStandingsDetailAdapter extends ListAdapter<StandingsDetail, GroupStandingsDetailAdapter.StandingsHolder> {
 
@@ -34,8 +34,7 @@ public class GroupStandingsDetailAdapter extends ListAdapter<StandingsDetail, Gr
 
         @Override
         public boolean areContentsTheSame(@NonNull StandingsDetail oldItem, @NonNull StandingsDetail newItem) {
-            return oldItem.player.getFirstName().equals(newItem.player.getFirstName())
-                    && oldItem.player.getLastName().equals(newItem.player.getLastName())
+            return oldItem.player.getName().equals(newItem.player.getName())
                     && oldItem.group.getTitle().equals(newItem.group.getTitle())
                     && oldItem.group.getDescription().equals(newItem.group.getDescription())
                     && oldItem.group.getCreationDate().equals(newItem.group.getCreationDate())
@@ -60,7 +59,7 @@ public class GroupStandingsDetailAdapter extends ListAdapter<StandingsDetail, Gr
     @Override
     public void onBindViewHolder(@NonNull StandingsHolder holder, int position) {
         StandingsDetail currentStandingsDetail = getItem(position);
-        String playerName = (position+1) + " " + currentStandingsDetail.player.getFirstName() + " " + currentStandingsDetail.player.getLastName();
+        String playerName = (position+1) + " " + currentStandingsDetail.player.getName();
         holder.name.setText(playerName);
         holder.rating.setText(String.valueOf(currentStandingsDetail.standings.getRating()));
         holder.games.setText(String.valueOf(currentStandingsDetail.standings.getGames()));

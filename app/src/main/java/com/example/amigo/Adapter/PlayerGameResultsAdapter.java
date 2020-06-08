@@ -32,7 +32,7 @@ public class PlayerGameResultsAdapter extends RecyclerView.Adapter<PlayerGameRes
     @Override
     public void onBindViewHolder(@NonNull PlayerGameResultsHolder holder, int position) {
         Player currentPlayer = players.get(position);
-        String playerName = currentPlayer.getFirstName() + " " + currentPlayer.getLastName();
+        String playerName = currentPlayer.getName();
         holder.playerName.setText(playerName);
         holder.goals.setText(String.valueOf(goals.get(position)));
         holder.assists.setText(String.valueOf(assists.get(position)));

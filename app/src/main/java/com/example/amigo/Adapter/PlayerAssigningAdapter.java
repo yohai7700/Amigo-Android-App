@@ -52,7 +52,7 @@ public class PlayerAssigningAdapter extends RecyclerView.Adapter<PlayerAssigning
     @Override
     public void onBindViewHolder(@NonNull PlayerAssigningHolder holder, int position) {
         StandingsDetail currentPlayer = players.get(position);
-        String playerName = currentPlayer.player.getFirstName() + " " + currentPlayer.player.getLastName();
+        String playerName = currentPlayer.player.getName();
         int ratingNum = currentPlayer.standings.getRating();
         String rating = String.valueOf(ratingNum);
         holder.playerRating.setText(rating);

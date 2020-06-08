@@ -27,13 +27,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class AddEditPlayerActivity extends AppCompatActivity {
 
-    public static final String EXTRA_PLAYER_FIRST_NAME = "com.example.amigo.Activities.AddEditGroupActivity.EXTRA_PLAYER_FIRST_NAME";
-    public static final String EXTRA_PLAYER_LAST_NAME = "com.example.amigo.Activities.AddEditGroupActivity.EXTRA_PLAYER_LAST_NAME";
+    public static final String EXTRA_PLAYER_NAME = "com.example.amigo.Activities.AddEditGroupActivity.EXTRA_PLAYER_NAME";
     public static final String EXTRA_PLAYER_PICTURE_URI = "com.example.amigo.Activities.AddEditGroupActivity.EXTRA_PLAYER_PICTURE_URI";
     public static final String STATE_PICTURE_URI = "STATE_PICTURE_URI";
 
-    private TextInputEditText editTextFirstName;
-    private TextInputEditText editTextLastName;
+    private TextInputEditText editTextName;
     private CircularImageView buttonPicture;
     private MaterialButton buttonOpenContacts;
     private Uri pictureUri;
@@ -41,10 +39,10 @@ public class AddEditPlayerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_player);
+        setContentView(R.layout.activity_add_edit_player);
+        setTitle("Add Player");
 
-        editTextFirstName = findViewById(R.id.edit_text_player_first_name);
-        editTextLastName = findViewById(R.id.edit_text_player_last_name);
+        editTextName = findViewById(R.id.edit_text_player_name);
         buttonPicture = findViewById(R.id.add_player_picture);
         buttonOpenContacts = findViewById(R.id.button_open_contacts);
 
@@ -55,21 +53,15 @@ public class AddEditPlayerActivity extends AppCompatActivity {
     }
 
     private void savePlayer(){
-        String fName = editTextFirstName.getText().toString();
-        String lName = editTextLastName.getText().toString();
+        String name = editTextName.getText().toString();
 
-        if(fName.trim().isEmpty()){
+        if(name.trim().isEmpty()){
             Toast.makeText(getApplicationContext(), "Please insert a first name", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        else if(lName.trim().isEmpty()){
-            Toast.makeText(getApplicationContext(), "Please insert a last name.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         Intent data = new Intent();
-        data.putExtra(EXTRA_PLAYER_FIRST_NAME, fName);
-        data.putExtra(EXTRA_PLAYER_LAST_NAME, lName);
+        data.putExtra(EXTRA_PLAYER_NAME, name);
         data.putExtra(EXTRA_PLAYER_PICTURE_URI, pictureUri);
 
         setResult(RESULT_OK,data);

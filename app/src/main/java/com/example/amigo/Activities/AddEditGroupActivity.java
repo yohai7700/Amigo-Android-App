@@ -50,7 +50,7 @@ public class AddEditGroupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_group);
+        setContentView(R.layout.activity_add_edit_group);
 
         groupViewModel = new ViewModelProvider(this).get(GroupViewModel.class);
         editTextTitle = findViewById(R.id.group_title);
@@ -106,7 +106,8 @@ public class AddEditGroupActivity extends AppCompatActivity {
 
         Bitmap bitmap = iconUri != null ? BitmapFactory.decodeFile(PictureHandler.getPicturePath(this, iconUri)) : null;
         //Bitmap check = BitmapFactory.decodeFile(PictureHandling.getPicturePath(this, iconUri));
-        bitmap = PictureHandler.getCompressedBitmap(this, iconUri, DEFAULT_GROUP_PHOTO);
+        if(bitmap != null)
+            bitmap = PictureHandler.getCompressedBitmap(this, iconUri, DEFAULT_GROUP_PHOTO);
         if (id != -1) {
             Group group = new Group(title, description, bitmap);
             group.id = id;

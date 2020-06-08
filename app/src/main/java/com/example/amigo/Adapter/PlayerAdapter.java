@@ -32,8 +32,7 @@ public class PlayerAdapter extends ListAdapter<Player, PlayerAdapter.PlayerHolde
 
         @Override
         public boolean areContentsTheSame(@NonNull Player oldItem, @NonNull Player newItem) {
-            return oldItem.getFirstName().equals(newItem.getFirstName())
-                    && oldItem.getLastName().equals(newItem.getLastName());
+            return oldItem.getName().equals(newItem.getName());
         }
     };
 
@@ -48,7 +47,7 @@ public class PlayerAdapter extends ListAdapter<Player, PlayerAdapter.PlayerHolde
     @Override
     public void onBindViewHolder(@NonNull PlayerHolder holder, int position) {
         Player currentPlayer = getItem(position);
-        String name = currentPlayer.getFirstName();
+        String name = currentPlayer.getName();
         holder.textViewName.setText(name);
         if(currentPlayer.getPicture() == null)
             holder.imgPicture.setImageResource(R.drawable.default_profile);
