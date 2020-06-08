@@ -103,7 +103,7 @@ public class AddEditGroupActivity extends AppCompatActivity {
 
         int id = getIntent().getIntExtra(EXTRA_GROUP_ID, -1); //only passing id if it's edit so that it will update and not add
 
-        Bitmap check = BitmapFactory.decodeFile(PictureHandling.getPicturePath(this, iconUri));
+        //Bitmap check = BitmapFactory.decodeFile(PictureHandling.getPicturePath(this, iconUri));
         Bitmap bitmap = PictureHandling.getCompressedBitmap(this, iconUri, DEFAULT_GROUP_PHOTO);
         if (id != -1) {
             Group group = new Group(title, description, bitmap);
