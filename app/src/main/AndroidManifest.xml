@@ -23,7 +23,6 @@
             android:name=".Activities.AddEditPlayerActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity"
-            android:name=".Activities.AddEditPlayerActivity"
             android:parentActivityName=".Activities.AddStandingsActivity" />
         <activity
             android:name=".Activities.AddStandingsActivity"

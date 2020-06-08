@@ -15,16 +15,9 @@ import android.widget.Toast;
 import com.example.amigo.Handler.PermissionsHandler;
 import com.example.amigo.Handler.PictureHandler;
 import com.example.amigo.Handler.RequestHandler;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
 import com.example.amigo.R;
 import com.example.amigo.StatsViewModel.StatsRepository.Entity.Group;
 import com.example.amigo.StatsViewModel.ViewModel.GroupViewModel;
-import com.example.amigo.Utility.PictureHandling;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
 
@@ -72,7 +65,6 @@ public class AddEditGroupActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 PictureHandler.openGalleryPermission(AddEditGroupActivity.this);
-                PictureHandling.startGalleryForResult(AddEditGroupActivity.this);
             }
         });
 
@@ -114,7 +106,7 @@ public class AddEditGroupActivity extends AppCompatActivity {
 
         Bitmap bitmap = iconUri != null ? BitmapFactory.decodeFile(PictureHandler.getPicturePath(this, iconUri)) : null;
         //Bitmap check = BitmapFactory.decodeFile(PictureHandling.getPicturePath(this, iconUri));
-        Bitmap bitmap = PictureHandling.getCompressedBitmap(this, iconUri, DEFAULT_GROUP_PHOTO);
+        bitmap = PictureHandler.getCompressedBitmap(this, iconUri, DEFAULT_GROUP_PHOTO);
         if (id != -1) {
             Group group = new Group(title, description, bitmap);
             group.id = id;
@@ -154,9 +146,6 @@ public class AddEditGroupActivity extends AppCompatActivity {
                         pickPhotoButton.setImageDrawable(new BitmapDrawable(getResources(), pictureBM));
                         break;
                     }
-                case PictureHandling.PICK_IMAGE_REQUEST:
-                    setIcon(data.getData());
-                    break;
                 default:
                     Toast.makeText(getApplicationContext(), "Couldn't get photo", Toast.LENGTH_SHORT).show();
             }
@@ -175,17 +164,8 @@ public class AddEditGroupActivity extends AppCompatActivity {
         if(uri == null)
             return;
         iconUri = uri;
-        Bitmap pictureBM = BitmapFactory.decodeFile(PictureHandling.getPicturePath(this, iconUri));
+        Bitmap pictureBM = BitmapFactory.decodeFile(PictureHandler.getPicturePath(this, iconUri));
         pickPhotoButton.setImageDrawable(new BitmapDrawable(getResources(), pictureBM));
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode){
-            case PictureHandling.MY_PERMISSIONS_READ_EXTERNAL_STORAGE:
-                PictureHandling.tryOpenGallery(AddEditGroupActivity.this);
-        }
     }
 
     @Override

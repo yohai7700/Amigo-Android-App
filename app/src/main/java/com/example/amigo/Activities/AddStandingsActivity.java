@@ -2,10 +2,22 @@ package com.example.amigo.Activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
+
+import com.example.amigo.Adapter.PlayerAdapter;
+import com.example.amigo.Handler.PictureHandler;
+import com.example.amigo.R;
+import com.example.amigo.StatsViewModel.StatsRepository.Entity.Player;
+import com.example.amigo.StatsViewModel.StatsRepository.Entity.Standings;
+import com.example.amigo.StatsViewModel.ViewModel.PlayerViewModel;
+import com.example.amigo.StatsViewModel.ViewModel.StandingsViewModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,18 +27,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.amigo.Adapter.PlayerAdapter;
-import com.example.amigo.R;
-import com.example.amigo.StatsViewModel.StatsRepository.Entity.Player;
-import com.example.amigo.StatsViewModel.StatsRepository.Entity.Standings;
-import com.example.amigo.StatsViewModel.ViewModel.PlayerViewModel;
-import com.example.amigo.StatsViewModel.ViewModel.StandingsViewModel;
-import com.example.amigo.Utility.PictureHandling;
-import com.example.amigo.Handler.PictureHandler;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.List;
 
 public class AddStandingsActivity extends AppCompatActivity {
     public static final String EXTRA_GROUP_ID = "com.example.amigo.Activities.AddStandingsActivity.EXTRA_GROUP_ID";
@@ -113,11 +113,6 @@ public class AddStandingsActivity extends AppCompatActivity {
             Uri pictureUri = data.getParcelableExtra(AddEditPlayerActivity.EXTRA_PLAYER_PICTURE_URI);
             Bitmap pictureBM = pictureUri == null ? BitmapFactory.decodeResource(getResources(), R.drawable.stock_profile) :
                                                     BitmapFactory.decodeFile(PictureHandler.getPicturePath(this, pictureUri));
-            String fName = data.getStringExtra(AddEditPlayerActivity.EXTRA_PLAYER_FIRST_NAME);
-            String lName = data.getStringExtra(AddEditPlayerActivity.EXTRA_PLAYER_LAST_NAME);
-            Uri pictureUri = data.getParcelableExtra(AddEditPlayerActivity.EXTRA_PLAYER_PICTURE_URI);
-
-            Bitmap pictureBM = PictureHandling.getCompressedBitmap(this, pictureUri, DEFAULT_PLAYER_PHOTO);
             Player newPlayer = new Player(fName, lName, pictureBM);
             playerViewModel.insert(newPlayer);
             //endregion
