@@ -115,6 +115,7 @@ public class GroupListActivity extends AppCompatActivity {
             public void onItemClick(Group group) {
                 Intent intent = new Intent(GroupListActivity.this, GroupStandingsActivity.class);
                 intent.putExtra(GroupStandingsActivity.EXTRA_GROUP_ID, group.id);
+                intent.putExtra(GroupStandingsActivity.EXTRA_GROUP_TITLE, group.getTitle());
                 startActivity(intent);
             }
         });

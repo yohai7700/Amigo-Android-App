@@ -118,6 +118,7 @@ public class AddEditPlayerActivity extends AppCompatActivity {
                 }
                 break;
             case RequestHandler.READ_CONTACTS_REQUEST:
+                editTextName.setText(ContactsHandler.getContactName(AddEditPlayerActivity.this, data.getData()));
                 break;
             default:
                 Toast.makeText(getApplicationContext(), "Couldn't get photo", Toast.LENGTH_SHORT).show();

@@ -10,6 +10,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.amigo.Adapter.GroupStandingsDetailAdapter;
+import com.example.amigo.R;
+import com.example.amigo.StatsViewModel.PlayerPerformance;
+import com.example.amigo.StatsViewModel.StatsRepository.Entity.Standings;
+import com.example.amigo.StatsViewModel.StatsRepository.InterClass.StandingsDetail;
+import com.example.amigo.StatsViewModel.ViewModel.GroupStandingsViewModel;
+import com.example.amigo.StatsViewModel.ViewModelFactory.GroupStandingsViewModelFactory;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,19 +29,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.amigo.Adapter.GroupStandingsDetailAdapter;
-import com.example.amigo.R;
-import com.example.amigo.StatsViewModel.StatsRepository.Entity.Player;
-import com.example.amigo.StatsViewModel.StatsRepository.Entity.Standings;
-import com.example.amigo.StatsViewModel.StatsRepository.InterClass.StandingsDetail;
-import com.example.amigo.StatsViewModel.ViewModel.GroupStandingsViewModel;
-import com.example.amigo.StatsViewModel.ViewModelFactory.GroupStandingsViewModelFactory;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class GroupStandingsActivity extends AppCompatActivity {
 
@@ -48,9 +47,7 @@ public class GroupStandingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_standings);
-        Log.d("TAG", "Standings has been created");
         //region gets Data
-        Log.d("TAG", "Receives data");
         Intent intent = getIntent();
         setTitle(intent.getStringExtra(EXTRA_GROUP_TITLE));
         groupID = intent.getIntExtra(EXTRA_GROUP_ID, -1);
@@ -60,9 +57,8 @@ public class GroupStandingsActivity extends AppCompatActivity {
         playGameFABtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), TeamAssignmentActivity.class);
+                Intent intent = new Intent(GroupStandingsActivity.this, TeamAssignmentActivity.class);
                 intent.putExtra(TeamAssignmentActivity.EXTRA_GROUP_ID, groupID);
-                intent.putExtra(TeamAssignmentActivity.EXTRA_PLAYERS_DETAILS, (Serializable) standings);
                 startActivityForResult(intent, RUN_GAME_REQUEST);
             }
         });
@@ -119,21 +115,20 @@ public class GroupStandingsActivity extends AppCompatActivity {
 
         if (requestCode == RUN_GAME_REQUEST && resultCode == RESULT_OK) {
             //region retrieve data
-            List<List<Player>> players = (List<List<Player>>)data.getSerializableExtra(MatchResultsActivity.EXTRA_PLAYERS_MATCH);
-            List<List<Integer>> goals = (List<List<Integer>>)data.getSerializableExtra(MatchResultsActivity.EXTRA_GOALS_MATCH);
-            List<List<Integer>> assists = (List<List<Integer>>)data.getSerializableExtra(MatchResultsActivity.EXTRA_ASSISTS_MATCH);
+            List<List<PlayerPerformance>> playersPerformances =
+                    (List<List<PlayerPerformance>>)data.getSerializableExtra(MatchResultsActivity.EXTRA_PLAYERS_PERFORMANCE);
             //endregion
             //region updating players standings
-            if(players.size() == 2 && goals.size() == 2 && assists.size() == 2) {
-                int winnerIndex = getWinnerTeamIndex(goals);
-                for(List<Player> playersTeam : players) {
-                    int teamIndex = players.indexOf(playersTeam);
-                    for (Player player : playersTeam) {
+            if(playersPerformances.size() == 2) {
+                int winnerIndex = getWinnerTeamIndex(playersPerformances);
+                for(List<PlayerPerformance> playersTeam : playersPerformances) {
+                    int teamIndex = playersPerformances.indexOf(playersTeam);
+                    for (PlayerPerformance playerPerformance : playersTeam) {
                         StandingsDetail tempStands = new StandingsDetail();
                         for (StandingsDetail stands : standings)
-                            if (stands.player.id == player.id)
+                            if (stands.player.id == playerPerformance.getID())
                                 tempStands = stands;
-                        Standings playerStandings = new Standings(groupID, player.id,
+                        Standings playerStandings = new Standings(groupID, playerPerformance.getID(),
                                 tempStands.standings.getGames(),
                                 tempStands.standings.getWins(),
                                 tempStands.standings.getLosses(),
@@ -143,16 +138,16 @@ public class GroupStandingsActivity extends AppCompatActivity {
                         //region cases of win, loss or draw
                         if (winnerIndex == teamIndex)
                             groupStandingsViewModel.update(playerStandings.updatedStats(true, false,
-                                    goals.get(teamIndex).get(playersTeam.indexOf(player)),
-                                    assists.get(teamIndex).get(playersTeam.indexOf(player))));
+                                    playerPerformance.getGoals(),
+                                    playerPerformance.getAssists()));
                         else if(winnerIndex == -1)
                             groupStandingsViewModel.update(playerStandings.updatedStats(false, false,
-                                    goals.get(teamIndex).get(playersTeam.indexOf(player)),
-                                    assists.get(teamIndex).get(playersTeam.indexOf(player))));
+                                    playerPerformance.getGoals(),
+                                    playerPerformance.getAssists()));
                         else
                             groupStandingsViewModel.update(playerStandings.updatedStats(false, true,
-                                    goals.get(teamIndex).get(playersTeam.indexOf(player)),
-                                    assists.get(teamIndex).get(playersTeam.indexOf(player))));
+                                    playerPerformance.getGoals(),
+                                    playerPerformance.getAssists()));
                         //endregion
                     }
                 }
@@ -186,16 +181,16 @@ public class GroupStandingsActivity extends AppCompatActivity {
     }
 
     //assumes 2 teams
-    private int getWinnerTeamIndex(List<List<Integer>> goals){
+    private int getWinnerTeamIndex(List<List<PlayerPerformance>> playersPerformances){
         int index = -1;
         List<Integer> goalsNumber = new ArrayList<>();
         int sum = 0;
-        for (Integer goalsNum : goals.get(0))
-            sum += goalsNum;
+        for (PlayerPerformance playerPerformance : playersPerformances.get(0))
+            sum += playerPerformance.getGoals();
         goalsNumber.add(sum);
         sum = 0;
-        for (Integer goalsNum : goals.get(1))
-            sum += goalsNum;
+        for (PlayerPerformance playerPerformance : playersPerformances.get(1))
+            sum += playerPerformance.getGoals();
         goalsNumber.add(sum);
         if(goalsNumber.get(0) > goalsNumber.get(1))
             return 0;

@@ -14,12 +14,10 @@ import androidx.lifecycle.LiveData;
 public class StandingsViewModel extends AndroidViewModel {
 
     private StandingsRepository standingsRepository;
-    private LiveData<List<Standings>> standings;
 
     public StandingsViewModel(@NonNull Application application) {
         super(application);
         standingsRepository = new StandingsRepository(application);
-        standings = standingsRepository.getAllStandings();
     }
 
     public void insert(Standings standings){
@@ -35,6 +33,10 @@ public class StandingsViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<Standings>> getAllStandings(){
-        return standings;
+        return standingsRepository.getAllStandings();
+    }
+
+    public LiveData<List<Standings>>  getGroupStandings(int groupID){
+        return standingsRepository.getStandingsByGroupRatingDesc(groupID);
     }
 }

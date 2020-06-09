@@ -109,8 +109,8 @@ public class AddStandingsActivity extends AppCompatActivity {
             //region inserts new player
             String name = data.getStringExtra(AddEditPlayerActivity.EXTRA_PLAYER_NAME);
             Uri pictureUri = data.getParcelableExtra(AddEditPlayerActivity.EXTRA_PLAYER_PICTURE_URI);
-            Bitmap pictureBM = pictureUri != null ? BitmapFactory.decodeFile(PictureHandler.getPicturePath(this, pictureUri))
-                                                    : null;
+            Bitmap pictureBM = pictureUri != null ?
+                    BitmapFactory.decodeFile(PictureHandler.getPicturePath(this, pictureUri)) : null;
             Player newPlayer = new Player(name, pictureBM);
             playerViewModel.insert(newPlayer);
             //endregion

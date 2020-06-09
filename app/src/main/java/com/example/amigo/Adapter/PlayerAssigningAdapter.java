@@ -8,7 +8,8 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
 import com.example.amigo.R;
-import com.example.amigo.StatsViewModel.StatsRepository.InterClass.StandingsDetail;
+import com.example.amigo.StatsViewModel.StatsRepository.Entity.Standings;
+import com.example.amigo.StatsViewModel.ViewModel.PlayerViewModel;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textview.MaterialTextView;
 
@@ -24,13 +25,19 @@ public class PlayerAssigningAdapter extends RecyclerView.Adapter<PlayerAssigning
     public static String BLUE_TEAM = "com.example.amigo.Adapter.PlayerAssigningAdapter.BLUE_TEAM";
     public static String NONE_TEAM = "com.example.amigo.Adapter.PlayerAssigningAdapter.NON_TEAM";
 
-    private List<StandingsDetail> players = new ArrayList<>();
+    private List<Standings> players = new ArrayList<>();
+    private List<String> playerNames = new ArrayList<>();
     private String currentTeam;
     private Context context;
     private OnItemCheckListener onItemCheckListener;
+    private PlayerViewModel playerViewModel;
 
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    public void setPlayerViewModel(PlayerViewModel playerViewModel){
+        this.playerViewModel = playerViewModel;
     }
 
     public String getCurrentTeam() {
@@ -51,9 +58,9 @@ public class PlayerAssigningAdapter extends RecyclerView.Adapter<PlayerAssigning
 
     @Override
     public void onBindViewHolder(@NonNull PlayerAssigningHolder holder, int position) {
-        StandingsDetail currentPlayer = players.get(position);
-        String playerName = currentPlayer.player.getName();
-        int ratingNum = currentPlayer.standings.getRating();
+        Standings currentPlayer = players.get(position);
+        String playerName = playerNames.get(players.indexOf(currentPlayer));
+        int ratingNum = currentPlayer.getRating();
         String rating = String.valueOf(ratingNum);
         holder.playerRating.setText(rating);
         holder.playerAssignCheckBox.setText(playerName);
@@ -64,8 +71,9 @@ public class PlayerAssigningAdapter extends RecyclerView.Adapter<PlayerAssigning
         return players.size();
     }
 
-    public void setPlayers(List<StandingsDetail> players){
+    public void setPlayers(List<Standings> players, List<String> playerNames){
         this.players = players;
+        this.playerNames = playerNames;
         notifyDataSetChanged();
     }
 
@@ -82,26 +90,26 @@ public class PlayerAssigningAdapter extends RecyclerView.Adapter<PlayerAssigning
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     int position = getAdapterPosition();
-                    StandingsDetail currentPlayer = players.get(position);
+                    Standings currentPlayer = players.get(position);
                     if (position != RecyclerView.NO_POSITION){
-                        changeCheckBox(currentPlayer, isChecked);
+                        changeCheckBox(currentPlayer, playerNames.get(position), isChecked);
                     }
                 }
             });
         }
 
-        private void changeCheckBox(StandingsDetail currentPlayer, boolean isChecked){
+        private void changeCheckBox(Standings currentPlayer, String name, boolean isChecked){
             if(isChecked){ //changing from non-checked box to a team-checked box
-                onItemCheckListener.onItemCheck(currentPlayer, currentTeam);
+                onItemCheckListener.onItemCheck(currentPlayer.getPlayerID(), name, currentTeam);
                 playerAssignCheckBox.setButtonTintList(getTeamColorStateList());
             }
             else if(playerAssignCheckBox.getButtonTintList().equals(getTeamColorStateList())){//switching off a team-checked box
-                onItemCheckListener.onItemUncheck(currentPlayer, currentTeam);
+                onItemCheckListener.onItemUncheck(currentPlayer.getPlayerID(), currentTeam);
                 playerAssignCheckBox.setButtonTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.checkBoxDefaultColor)));
             }
             else{
-                onItemCheckListener.onItemUncheck(currentPlayer, currentTeam.equals(RED_TEAM)?BLUE_TEAM:RED_TEAM); //changing from one team to another
-                onItemCheckListener.onItemCheck(currentPlayer, currentTeam);
+                onItemCheckListener.onItemUncheck(currentPlayer.getPlayerID(), currentTeam.equals(RED_TEAM)?BLUE_TEAM:RED_TEAM); //changing from one team to another
+                onItemCheckListener.onItemCheck(currentPlayer.getPlayerID(), name, currentTeam);
                 playerAssignCheckBox.setButtonTintList(getTeamColorStateList());
                 playerAssignCheckBox.setChecked(true);
             }
@@ -125,8 +133,8 @@ public class PlayerAssigningAdapter extends RecyclerView.Adapter<PlayerAssigning
     }
 
     public interface OnItemCheckListener{
-        void onItemCheck(StandingsDetail standingsDetail, String currentTeam);
-        void onItemUncheck(StandingsDetail standingsDetail, String currentTeam);
+        void onItemCheck(int playerID, String name, String currentTeam);
+        void onItemUncheck(int playerID, String currentTeam);
     }
 
     public void setOnItemCheckListener(OnItemCheckListener onItemCheckListener){

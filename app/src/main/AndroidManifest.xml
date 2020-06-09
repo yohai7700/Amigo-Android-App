@@ -16,7 +16,9 @@
         android:theme="@style/GreenTheme"
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="android:supportsRtl">
-        <activity android:name=".Activities.MatchResultsActivity" />
+        <activity android:name=".Activities.MatchResultsActivity"
+            android:screenOrientation="landscape"
+            tools:ignore="LockedOrientationActivity" />
         <activity android:name=".Activities.TeamAssignmentActivity"
             android:parentActivityName=".Activities.GroupStandingsActivity"/>
         <activity

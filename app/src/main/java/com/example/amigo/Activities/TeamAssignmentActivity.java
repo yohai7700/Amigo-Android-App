@@ -8,8 +8,10 @@ import android.widget.Toast;
 
 import com.example.amigo.Adapter.PlayerAssigningAdapter;
 import com.example.amigo.R;
-import com.example.amigo.StatsViewModel.StatsRepository.Entity.Player;
+import com.example.amigo.StatsViewModel.StatsRepository.Entity.Standings;
 import com.example.amigo.StatsViewModel.StatsRepository.InterClass.StandingsDetail;
+import com.example.amigo.StatsViewModel.ViewModel.GroupStandingsViewModel;
+import com.example.amigo.StatsViewModel.ViewModelFactory.GroupStandingsViewModelFactory;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -17,23 +19,27 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class TeamAssignmentActivity extends AppCompatActivity {
-    public static String EXTRA_GROUP_ID = "com.example.amigo.Activities.TeamAssignmentActivity.EXTRA_GROUP_ID";
-    public static String EXTRA_PLAYERS_DETAILS = "com.example.amigo.Activities.TeamAssignmentActivity.EXTRA_PLAYERS_DETAILS";
+    public static final String EXTRA_GROUP_ID = "com.example.amigo.Activities.TeamAssignmentActivity.EXTRA_GROUP_ID";
+    public static final String EXTRA_PLAYERS_DETAILS = "com.example.amigo.Activities.TeamAssignmentActivity.EXTRA_PLAYERS_DETAILS";
 
     public static int RUN_GAME_REQUEST = 1;
 
     RecyclerView playerAssignmentRecyclerView;
-    private List<Player> redPlayers = new ArrayList<>();
-    private List<Player> bluePlayers = new ArrayList<>();
-    private List<StandingsDetail> players;
+    private final List<Integer> redPlayers = new ArrayList<>();
+    private final List<String> redPlayersNames = new ArrayList<>();
+    private final List<Integer> bluePlayers = new ArrayList<>();
+    private final List<String> bluePlayersNames = new ArrayList<>();
+    private GroupStandingsViewModel standingsViewModel;
+    private int groupID;
     private PlayerAssigningAdapter playerAssigningAdapter;
 
     @Override
@@ -43,46 +49,20 @@ public class TeamAssignmentActivity extends AppCompatActivity {
 
         setTitle("Teams Assignment");
         final Intent intent = getIntent();
-        players = (List<StandingsDetail>) intent.getSerializableExtra(EXTRA_PLAYERS_DETAILS);
+        groupID = intent.getIntExtra(EXTRA_GROUP_ID, -1);
         /*
         List<Integer> teamsRating = new ArrayList<>();
         List<List<StandingsDetail>> teams = divideToEqualTeams(players, 3);
         for (List<StandingsDetail> team: teams)
             teamsRating.add(teamTotalRating(team));
-            */
-        //region sets RecyclerView for players
-        playerAssignmentRecyclerView = findViewById(R.id.player_assigning_recycler_view);
-        playerAssignmentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        playerAssignmentRecyclerView.setHasFixedSize(true);
-        //endregion implements RecyclerView for red team
-
-        //region sets players - adapter
-        playerAssigningAdapter = new PlayerAssigningAdapter();
-        playerAssignmentRecyclerView.setAdapter(playerAssigningAdapter);
-        playerAssigningAdapter.setContext(this);
-        playerAssigningAdapter.setPlayers(players);
-        //endregion
-
-        playerAssigningAdapter.setOnItemCheckListener(new PlayerAssigningAdapter.OnItemCheckListener() {
-            @Override
-            public void onItemCheck(StandingsDetail standingsDetail, String currentTeam) {
-                if (currentTeam.equals(PlayerAssigningAdapter.RED_TEAM))
-                    redPlayers.add(standingsDetail.player);
-                else
-                    bluePlayers.add(standingsDetail.player);
-            }
-
-            @Override
-            public void onItemUncheck(StandingsDetail standingsDetail, String currentTeam) {
-                if (currentTeam.equals(PlayerAssigningAdapter.RED_TEAM))
-                    redPlayers.remove(standingsDetail.player);
-                else
-                    bluePlayers.remove(standingsDetail.player);
-            }
-        });
+        */
+        setRecyclerView();
+        setViewModels();
+        setPlayerAssigningAdapter();
+        setAdapterOnItemClickListener();
         //TODO: remember to fix assigning bug
 
-        //region initing team button
+        //region initiating team button
         final MaterialButton teamButton = findViewById(R.id.team_button);
         teamButton.setText(R.string.red_team_name);
         teamButton.setBackgroundColor(ContextCompat.getColor(this, R.color.redTeamColor));
@@ -118,7 +98,9 @@ public class TeamAssignmentActivity extends AppCompatActivity {
                 }
                 Intent startGame = new Intent(TeamAssignmentActivity.this, MatchResultsActivity.class);
                 startGame.putExtra(MatchResultsActivity.EXTRA_RED_PLAYERS, (Serializable) redPlayers);
+                startGame.putExtra(MatchResultsActivity.EXTRA_RED_PLAYERS_NAMES, (Serializable)redPlayersNames);
                 startGame.putExtra(MatchResultsActivity.EXTRA_BLUE_PLAYERS, (Serializable) bluePlayers);
+                startGame.putExtra(MatchResultsActivity.EXTRA_BLUE_PLAYERS_NAMES, (Serializable) bluePlayersNames);
                 startActivityForResult(startGame, RUN_GAME_REQUEST);
             }
         });
@@ -194,7 +176,7 @@ public class TeamAssignmentActivity extends AppCompatActivity {
         }
         return maxPlayer;
     }
-
+/*
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -205,11 +187,73 @@ public class TeamAssignmentActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        List<StandingsDetail> redPlayers = (List<StandingsDetail>) savedInstanceState.getSerializable("RED_PLAYERS");
-        List<StandingsDetail> bluePlayers = (List<StandingsDetail>) savedInstanceState.getSerializable("BLUE_PLAYERS");
-        for(StandingsDetail player : redPlayers)
+        List<Integer> redPlayers = (List<Integer>) savedInstanceState.getSerializable("RED_PLAYERS");
+        List<Integer> bluePlayers = (List<Integer>) savedInstanceState.getSerializable("BLUE_PLAYERS");
+        for(int player : redPlayers)
             playerAssigningAdapter.getOnItemCheckListener().onItemCheck(player, PlayerAssigningAdapter.RED_TEAM);
-        for(StandingsDetail player : bluePlayers)
+        for(int player : bluePlayers)
             playerAssigningAdapter.getOnItemCheckListener().onItemCheck(player, PlayerAssigningAdapter.BLUE_TEAM);
+    }*/
+
+    private void setRecyclerView(){
+        playerAssignmentRecyclerView = findViewById(R.id.player_assigning_recycler_view);
+        playerAssignmentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        playerAssignmentRecyclerView.setHasFixedSize(true);
+    }
+
+    private void setPlayerAssigningAdapter(){
+        playerAssigningAdapter = new PlayerAssigningAdapter();
+        playerAssignmentRecyclerView.setAdapter(playerAssigningAdapter);
+        playerAssigningAdapter.setContext(this);
+    }
+
+    private void setAdapterOnItemClickListener(){
+        playerAssigningAdapter.setOnItemCheckListener(new PlayerAssigningAdapter.OnItemCheckListener() {
+            @Override
+            public void onItemCheck(int playerID, String name, String currentTeam) {
+                if (currentTeam.equals(PlayerAssigningAdapter.RED_TEAM)) {
+                    redPlayers.add(playerID);
+                    redPlayersNames.add(name);
+                }
+                else
+                {
+                    bluePlayers.add(playerID);
+                    bluePlayersNames.add(name);
+                }
+            }
+
+            @Override
+            public void onItemUncheck(int playerID, String currentTeam){
+                List<Integer> players = currentTeam.equals(PlayerAssigningAdapter.RED_TEAM) ? redPlayers : bluePlayers;
+                List<String> playersNames = currentTeam.equals(PlayerAssigningAdapter.RED_TEAM) ? redPlayersNames : bluePlayersNames;
+                playersNames.remove(players.indexOf(playerID));
+                players.remove(players.indexOf(playerID));
+                /*
+                if (currentTeam.equals(PlayerAssigningAdapter.RED_TEAM)) {
+                    redPlayersNames.remove(redPlayers.indexOf(playerID));
+                    redPlayers.remove(redPlayers.indexOf(playerID));
+                }
+                else {
+                    bluePlayersNames.remove(bluePlayers.indexOf(playerID));
+                    bluePlayers.remove(bluePlayers.indexOf(playerID));
+                }*/
+            }
+        });
+    }
+
+    private void setViewModels(){
+        standingsViewModel = new ViewModelProvider(this, new GroupStandingsViewModelFactory(getApplication(), groupID)).get(GroupStandingsViewModel.class);
+        standingsViewModel.getAllStandingsDetail().observe(this, new Observer<List<StandingsDetail>>() {
+            @Override
+            public void onChanged(List<StandingsDetail> standingsDetails) {
+                ArrayList<Standings> players = new ArrayList<>();
+                ArrayList<String> playersNames = new ArrayList<>();
+                for(StandingsDetail standingsDetail : standingsDetails) {
+                    players.add(standingsDetail.standings);
+                    playersNames.add(standingsDetail.player.getName());
+                }
+                playerAssigningAdapter.setPlayers(players, playersNames);
+            }
+        });
     }
 }

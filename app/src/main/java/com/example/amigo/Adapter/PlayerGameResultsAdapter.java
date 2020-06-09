@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.amigo.R;
-import com.example.amigo.StatsViewModel.StatsRepository.Entity.Player;
+import com.example.amigo.StatsViewModel.PlayerPerformance;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class PlayerGameResultsAdapter extends RecyclerView.Adapter<PlayerGameResultsAdapter.PlayerGameResultsHolder> {
 
-    private List<Player> players = new ArrayList<>();
-    private List<Integer> goals;
-    private List<Integer> assists;
+    private List<PlayerPerformance> playersPerformances = new ArrayList<>();
+    private List<String> playersNames;
     private OnItemClickListener onItemClickListener;
 
     @NonNull
@@ -31,18 +30,18 @@ public class PlayerGameResultsAdapter extends RecyclerView.Adapter<PlayerGameRes
 
     @Override
     public void onBindViewHolder(@NonNull PlayerGameResultsHolder holder, int position) {
-        Player currentPlayer = players.get(position);
-        String playerName = currentPlayer.getName();
+        PlayerPerformance currentPlayerPerformance = playersPerformances.get(position);
+        String playerName = playersNames.get(position);
         holder.playerName.setText(playerName);
-        holder.goals.setText(String.valueOf(goals.get(position)));
-        holder.assists.setText(String.valueOf(assists.get(position)));
+        holder.goals.setText(currentPlayerPerformance.getGoals() + "");
+        holder.assists.setText(currentPlayerPerformance.getAssists() + "");
 
     }
 
 
     @Override
     public int getItemCount() {
-        return players.size();
+        return playersPerformances.size();
     }
 
     class PlayerGameResultsHolder extends RecyclerView.ViewHolder{
@@ -60,22 +59,21 @@ public class PlayerGameResultsAdapter extends RecyclerView.Adapter<PlayerGameRes
                 @Override
                 public void onClick(View v) {
                     int position = getAdapterPosition();
-                    onItemClickListener.onItemClick(players.get(position));
+                    onItemClickListener.onItemClick(playersPerformances.get(position));
                 }
             });
         }
     }
 
-    public void setStats(List<Player> players, List<Integer> goals, List<Integer> assists) {
-        this.players = players;
-        this.assists = assists;
-        this.goals = goals;
+    public void setPlayers(List<PlayerPerformance> playersPerformances, List<String> playersNames) {
+        this.playersPerformances = playersPerformances;
+        this.playersNames = playersNames;
         notifyDataSetChanged();
 
     }
 
     public interface OnItemClickListener{
-        void onItemClick(Player player);
+        void onItemClick(PlayerPerformance playerPerformance);
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener){
