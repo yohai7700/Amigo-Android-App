@@ -3,7 +3,6 @@ package com.example.amigo.Activities;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,7 +21,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
@@ -30,6 +28,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+/**
+ * This activity shows standings of a group
+ * @author Yohai Mazuz
+ */
 public class GroupStandingsActivity extends AppCompatActivity {
 
     public static final String EXTRA_GROUP_ID = "com.example.amigo.Activities.GroupStandingsActivity.EXTRA_GROUP_ID";
@@ -40,7 +42,10 @@ public class GroupStandingsActivity extends AppCompatActivity {
     public static final int RUN_GAME_REQUEST = 1;
 
     private int groupID;
+    private GroupStandingsDetailAdapter adapter;
+    private RecyclerView recyclerView;
     private GroupStandingsViewModel groupStandingsViewModel;
+
     private List<StandingsDetail> standings;
     //@SuppressLint("SourceLockedOrientationActivity")
     @Override
@@ -51,63 +56,19 @@ public class GroupStandingsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         setTitle(intent.getStringExtra(EXTRA_GROUP_TITLE));
         groupID = intent.getIntExtra(EXTRA_GROUP_ID, -1);
-        //endregion;
-        //region sets FAB
-        FloatingActionButton playGameFABtn = (findViewById(R.id.play_game_button));
-        playGameFABtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(GroupStandingsActivity.this, TeamAssignmentActivity.class);
-                intent.putExtra(TeamAssignmentActivity.EXTRA_GROUP_ID, groupID);
-                startActivityForResult(intent, RUN_GAME_REQUEST);
-            }
-        });
         //endregion
+        setPlayGameFAB();
         //region sets group end case(can't open)
         if (groupID == -1) {
             Toast.makeText(this, "Couldn't open group", Toast.LENGTH_SHORT).show();
             finish();
         }
         //endregion
-        //region sets RecyclerView standings
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.standings_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setHasFixedSize(true);
-        //endregion
-        //region sets recycler-view background opacity - 180/255
-        Drawable background = recyclerView.getBackground();
-        background.setAlpha(180);
-        //endregion
-        //region sets standings adapter
-        final GroupStandingsDetailAdapter groupStandingsAdapter = new GroupStandingsDetailAdapter();
-        groupStandingsAdapter.setContext(getApplicationContext());
-        recyclerView.setAdapter(groupStandingsAdapter);
-        //endregion
-        //region sets ViewModel
-        groupStandingsViewModel = new ViewModelProvider(this, new GroupStandingsViewModelFactory(getApplication(), groupID)).get(GroupStandingsViewModel.class);
-        groupStandingsViewModel.getAllStandingsDetail().observe(this, new Observer<List<StandingsDetail>>() {
-            @Override
-            public void onChanged(List<StandingsDetail> standingsDetails) {
-                groupStandingsAdapter.submitList(standingsDetails);
-                standings = standingsDetails;
-            }
-        });
-        //endregion
-        //TODO: add longClickListener for group standings - editing and removing
-        //region sets LongClickListener TODO: add edit options for long click on standings
-        groupStandingsAdapter.setOnItemLongClickListener(new GroupStandingsDetailAdapter.OnItemLongClickListener() {
-            @Override
-            public void onItemLongClick(StandingsDetail standingsDetail) {
-            }
-        });
-        //endregion
+        setRecyclerView();
+        setAdapter();
+        setViewModel();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d("TAG", "Standings has been destroyed.");
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -180,7 +141,11 @@ public class GroupStandingsActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    //assumes 2 teams
+    /**
+     * assumes 2 team. return the index of the winning team or -1 if draw
+     * @param playersPerformances the teams performances
+     * @return index of winning team
+     */
     private int getWinnerTeamIndex(List<List<PlayerPerformance>> playersPerformances){
         int index = -1;
         List<Integer> goalsNumber = new ArrayList<>();
@@ -199,17 +164,54 @@ public class GroupStandingsActivity extends AppCompatActivity {
         return -1;
     }
 
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(STATE_GROUP_ID, groupID);
-        Log.d("TAG","Saving group" + groupID);
+    /**
+     * sets FAB that start game, moves to team assigning activity.
+     */
+    private void setPlayGameFAB(){
+        FloatingActionButton playGameFABtn = (findViewById(R.id.play_game_button));
+        playGameFABtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(GroupStandingsActivity.this, TeamAssignmentActivity.class);
+                intent.putExtra(TeamAssignmentActivity.EXTRA_GROUP_ID, groupID);
+                startActivityForResult(intent, RUN_GAME_REQUEST);
+            }
+        });
     }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        groupID = savedInstanceState.getInt(STATE_GROUP_ID, -1);
-        Log.d("TAG","Restoring group" + groupID);
+    /**
+     * sets recycler view that shows standings
+     */
+    private void setRecyclerView(){
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.standings_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
+        //region sets recycler-view background opacity - 180/255
+        Drawable background = recyclerView.getBackground();
+        background.setAlpha(180);
+        //endregion
+    }
+
+    /**
+     * sets adapter for recycler view
+     */
+    private void setAdapter(){
+        final GroupStandingsDetailAdapter groupStandingsAdapter = new GroupStandingsDetailAdapter();
+        groupStandingsAdapter.setContext(getApplicationContext());
+        recyclerView.setAdapter(groupStandingsAdapter);
+    }
+
+    /**
+     * sets view model of standings
+     */
+    private void setViewModel(){
+        groupStandingsViewModel = new ViewModelProvider(this, new GroupStandingsViewModelFactory(getApplication(), groupID)).get(GroupStandingsViewModel.class);
+        groupStandingsViewModel.getAllStandingsDetail().observe(this, new Observer<List<StandingsDetail>>() {
+            @Override
+            public void onChanged(List<StandingsDetail> standingsDetails) {
+                adapter.submitList(standingsDetails);
+                standings = standingsDetails;
+            }
+        });
     }
 }

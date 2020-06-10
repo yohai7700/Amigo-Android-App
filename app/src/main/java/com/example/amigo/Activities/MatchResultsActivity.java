@@ -21,6 +21,10 @@ import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+/**
+ * Activity that displays a game screen for choosing players to score goals or assists.
+ * @author Yohai Mazuz
+ */
 public class MatchResultsActivity extends AppCompatActivity {
     public static String EXTRA_RED_PLAYERS = "com.example.amigo.Activities.GameResultActivity.EXTRA_RED_PLAYERS";
     public static String EXTRA_BLUE_PLAYERS = "com.example.amigo.Activities.GameResultActivity.EXTRA_BLUE_PLAYERS";
@@ -58,7 +62,7 @@ public class MatchResultsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_results);
         setTitle("Set Match");
-
+        //region sets components
         redTeamRecyclerView = findViewById(R.id.red_team_recycler_view);
         blueTeamRecyclerView = findViewById(R.id.blue_team_recycler_view);;
         score = findViewById(R.id.game_score);
@@ -66,16 +70,13 @@ public class MatchResultsActivity extends AppCompatActivity {
         finishGameButton = findViewById(R.id.finish_game_button);
         addGoalButton = findViewById(R.id.add_goal_button);
         addAssistButton = findViewById(R.id.add_assist_button);
-
-        //region retrieve data
+        //endregion
         setPlayers();
         updateGameScore();
         buttonMessage.setVisibility(View.INVISIBLE);
         buttonClicked = ButtonClick.NONE;
 
         setActionButtonsOnClickListener();
-        //endregion
-        //region finishes game and send data
         finishGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,26 +107,30 @@ public class MatchResultsActivity extends AppCompatActivity {
                         .setNegativeButton("Cancel", dialogClickListener).show();
             }
         });
-        //endregion
-        //region setting recycler views
         setRecyclerViews();
         setAdapters();
-        //endregion
-        //region sets adapters
-        //endregion
     }
 
+    /**
+     * @param team the team to set the recycler view for
+     */
     private void setRecyclerView(Team team){
         RecyclerView recyclerView = team == Team.RED ? redTeamRecyclerView : blueTeamRecyclerView;
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
     }
 
+    /**
+     * sets recycler views of the teams
+     */
     private void setRecyclerViews(){
         setRecyclerView(Team.RED);
         setRecyclerView(Team.BLUE);
     }
 
+    /**
+     * sets adapters for the recycler views of the team
+     */
     private void setAdapters(){
         redTeamRecyclerView.setAdapter(redTeamAdapter);
         blueTeamRecyclerView.setAdapter(blueTeamAdapter);
@@ -133,6 +138,11 @@ public class MatchResultsActivity extends AppCompatActivity {
         blueTeamAdapter.setPlayers(bluePlayersPerformance, bluePlayersNames);
     }
 
+    /**
+     * sets the given players from the previous activity for the match
+     * @param team given team
+     * @param intent the intent with the players
+     */
     private void setPlayers(Team team, Intent intent){
         List<Integer> players = (List<Integer>) intent.getSerializableExtra(
                 team == Team.BLUE ? EXTRA_BLUE_PLAYERS: EXTRA_RED_PLAYERS);
@@ -147,17 +157,27 @@ public class MatchResultsActivity extends AppCompatActivity {
         setAdapterOnItemClickListener(Team.RED);
     }
 
+    /**
+     * sets players for both teams
+     */
     private void setPlayers(){
         Intent intent = getIntent();
         setPlayers(Team.BLUE, intent);
         setPlayers(Team.RED, intent);
     }
 
+    /**
+     * update game score on the screen
+     */
     private void updateGameScore(){
         String gameScore = PlayerPerformance.getTeamGoals(redPlayersPerformance) + " - " + PlayerPerformance.getTeamGoals(bluePlayersPerformance);
         score.setText(gameScore);
     }
 
+    /**
+     * sets the listener that adds a goal or assist when clicking on a player
+     * @param team given team
+     */
     private void setAdapterOnItemClickListener(Team team){
         final PlayerGameResultsAdapter adapter = team == Team.BLUE ? blueTeamAdapter : redTeamAdapter;
         final List<PlayerPerformance> playersPerformances = team == Team.BLUE ? bluePlayersPerformance : redPlayersPerformance;
@@ -183,11 +203,18 @@ public class MatchResultsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * sets buttons of goal or assist
+     */
     private void setActionButtonsOnClickListener(){
         setActionButtonOnClickListener(ButtonClick.GOAL);
         setActionButtonOnClickListener(ButtonClick.ASSIST);
     }
 
+    /**
+     * sets action button for specific button
+     * @param buttonClick the given button
+     */
     private void setActionButtonOnClickListener(final ButtonClick buttonClick){
         AppCompatImageButton button = buttonClick == ButtonClick.GOAL ? addGoalButton : addAssistButton;
         button.setOnClickListener(new View.OnClickListener() {
@@ -205,5 +232,4 @@ public class MatchResultsActivity extends AppCompatActivity {
             }
         });
     }
-
 }

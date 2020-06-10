@@ -25,6 +25,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+/**
+ * This activity lets the user add or edit a player.
+ * @author Yohai Mazuz
+ */
 public class AddEditPlayerActivity extends AppCompatActivity {
 
     public static final String EXTRA_PLAYER_NAME = "com.example.amigo.Activities.AddEditGroupActivity.EXTRA_PLAYER_NAME";
@@ -52,6 +56,9 @@ public class AddEditPlayerActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
     }
 
+    /**
+     * Saves the player and called when clicking on save menu button
+     */
     private void savePlayer(){
         String name = editTextName.getText().toString();
 
@@ -86,6 +93,9 @@ public class AddEditPlayerActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * @return OnClickListener for clicking on picture button
+     */
     private View.OnClickListener getPictureOnClickListener(){
         return new View.OnClickListener() {
             @Override
@@ -94,7 +104,9 @@ public class AddEditPlayerActivity extends AppCompatActivity {
             }
         };
     }
-
+    /**
+     * @return OnClickListener for clicking on contacts button
+     */
     private View.OnClickListener getContactsOnClickListener(){
         return new View.OnClickListener() {
             @Override
@@ -125,6 +137,10 @@ public class AddEditPlayerActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Sets the picture for the picture button with a given picture URI
+     * @param uri the picture Uri
+     */
     private void setPicture(Uri uri){
         if(uri == null)
             return;

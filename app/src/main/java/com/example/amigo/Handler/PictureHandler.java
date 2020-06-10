@@ -18,9 +18,18 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import id.zelory.compressor.Compressor;
 
+/**
+ * @author Yohai Mazuz
+ * This class handles all picture handling functions.
+ */
 public class PictureHandler {
+    /**
+     * This function returns picture file path from a URI.
+     * @param context The context from which the function is called
+     * @param uri The URI of teh picture
+     * @return picture file path
+     */
     public static String getPicturePath(Context context,  Uri uri){
-        //region get icon image by URI
         String[] filePathColumn = {MediaStore.Images.Media.DATA};
         Cursor cursor = context.getContentResolver().query(uri,
                 filePathColumn, null, null, null);
@@ -29,9 +38,12 @@ public class PictureHandler {
         String picturePath = cursor.getString(columnIndex);
         cursor.close();
         return picturePath;
-        //endregion
     }
 
+    /**
+     * This functions open permission for gallery, if granted it opens the gallery for choosing a picture.
+     * @param activity the activity to return result
+     */
     public static void openGalleryPermission(Activity activity){
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED)
@@ -40,14 +52,21 @@ public class PictureHandler {
                     PermissionsHandler.MY_PERMISSIONS_READ_EXTERNAL_STORAGE);
         tryOpenGallery(activity);
     }
-
+    /**
+     * This functions tries to open gallery, depends if permission is granted.
+     * @param activity the activity to return result
+     */
     public static void tryOpenGallery(Activity activity){
         if ((ContextCompat.checkSelfPermission(activity,
                 Manifest.permission.READ_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED))
             openGalleryForResult(activity);
     }
-
+    /**
+     * This functions opens gallery for choosing a picture without checking
+     * permissions.
+     * @param activity the activity to return result
+     */
     private static void openGalleryForResult(Activity activity){
         Intent photoPick = new Intent(
                 Intent.ACTION_PICK,
@@ -55,6 +74,14 @@ public class PictureHandler {
         activity.startActivityForResult(photoPick, RequestHandler.PICK_IMAGE_REQUEST);
     }
 
+    /**
+     * receives uri, returns compressed bitmap of the picture in the URI or default drawable if can't
+     * get picture from URI.
+     * @param context context from which function is called
+     * @param uri uri of the picture
+     * @param drawableDefault default resource drawble if can't compress
+     * @return compressed bitmap of picture
+     */
     public static Bitmap getCompressedBitmap(Context context, Uri uri, int drawableDefault){
         try {
             return new Compressor(context).setMaxHeight(720).setMaxWidth(1280).compressToBitmap(new File(getPicturePath(context, uri)));

@@ -30,6 +30,10 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+/**
+ * This class represents the groups list activity, which displays the groups to the user.
+ * @author Yohai Mazuz
+ */
 public class AddEditGroupActivity extends AppCompatActivity {
 
     public static final String EXTRA_GROUP_ID = "com.example.amigo.Activities.AddEditGroupActivity.EXTRA_GROUP_ID";
@@ -85,6 +89,10 @@ public class AddEditGroupActivity extends AppCompatActivity {
             setTitle("Add Group");
     }
 
+    /**
+     * Saves the group with the data in the fields.
+     * Only if group name and description have been filled.
+     */
     private void saveGroup() {
         String title = editTextTitle.getText().toString();
         String description = editTextDescription.getText().toString().trim();
@@ -161,6 +169,10 @@ public class AddEditGroupActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * sets given picture on the add photo button
+     * @param uri URI of a picture
+     */
     private void setIcon(Uri uri){
         if(uri == null)
             return;

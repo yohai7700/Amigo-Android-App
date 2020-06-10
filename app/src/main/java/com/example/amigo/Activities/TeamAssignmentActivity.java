@@ -26,14 +26,18 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
+/**
+ * This class represents the activity which the screen of the teams assignment is done on.
+ * @author Yohai Mazuz
+ */
 public class TeamAssignmentActivity extends AppCompatActivity {
     public static final String EXTRA_GROUP_ID = "com.example.amigo.Activities.TeamAssignmentActivity.EXTRA_GROUP_ID";
     public static final String EXTRA_PLAYERS_DETAILS = "com.example.amigo.Activities.TeamAssignmentActivity.EXTRA_PLAYERS_DETAILS";
 
     public static int RUN_GAME_REQUEST = 1;
 
-    RecyclerView playerAssignmentRecyclerView;
+    private RecyclerView playerAssignmentRecyclerView;
+    private MaterialButton teamButton;
     private final List<Integer> redPlayers = new ArrayList<>();
     private final List<String> redPlayersNames = new ArrayList<>();
     private final List<Integer> bluePlayers = new ArrayList<>();
@@ -50,61 +54,21 @@ public class TeamAssignmentActivity extends AppCompatActivity {
         setTitle("Teams Assignment");
         final Intent intent = getIntent();
         groupID = intent.getIntExtra(EXTRA_GROUP_ID, -1);
-        /*
+        /* For future implementation
         List<Integer> teamsRating = new ArrayList<>();
         List<List<StandingsDetail>> teams = divideToEqualTeams(players, 3);
         for (List<StandingsDetail> team: teams)
             teamsRating.add(teamTotalRating(team));
         */
         setRecyclerView();
-        setViewModels();
+        setViewModel();
         setPlayerAssigningAdapter();
         setAdapterOnItemClickListener();
         //TODO: remember to fix assigning bug
 
-        //region initiating team button
-        final MaterialButton teamButton = findViewById(R.id.team_button);
-        teamButton.setText(R.string.red_team_name);
-        teamButton.setBackgroundColor(ContextCompat.getColor(this, R.color.redTeamColor));
         playerAssigningAdapter.setCurrentTeam(PlayerAssigningAdapter.RED_TEAM);
-        teamButton.setTextColor(Color.WHITE);
-        //endregion initiating team button
-
-        //region implements onClickListener for team button
-        teamButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (teamButton.getText().equals("Red Team")) {
-                    teamButton.setText(R.string.blue_team_name);
-                    teamButton.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.blueTeamColor));
-                    playerAssigningAdapter.setCurrentTeam(PlayerAssigningAdapter.BLUE_TEAM);
-                } else {
-                    teamButton.setText(R.string.red_team_name);
-                    teamButton.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.redTeamColor));
-                    playerAssigningAdapter.setCurrentTeam(PlayerAssigningAdapter.RED_TEAM);
-                }
-            }
-        });
-        //endregion implements onClickListener for team button
-
-        //region sets FAB run game
-        FloatingActionButton runGameFAB = findViewById(R.id.run_game_button);
-        runGameFAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (redPlayers.isEmpty() || bluePlayers.isEmpty()) {
-                    Toast.makeText(TeamAssignmentActivity.this, "Each team must have at least one player", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                Intent startGame = new Intent(TeamAssignmentActivity.this, MatchResultsActivity.class);
-                startGame.putExtra(MatchResultsActivity.EXTRA_RED_PLAYERS, (Serializable) redPlayers);
-                startGame.putExtra(MatchResultsActivity.EXTRA_RED_PLAYERS_NAMES, (Serializable)redPlayersNames);
-                startGame.putExtra(MatchResultsActivity.EXTRA_BLUE_PLAYERS, (Serializable) bluePlayers);
-                startGame.putExtra(MatchResultsActivity.EXTRA_BLUE_PLAYERS_NAMES, (Serializable) bluePlayersNames);
-                startActivityForResult(startGame, RUN_GAME_REQUEST);
-            }
-        });
-        //endregion
+        setTeamButton();
+        setRunGameFAB();
     }
 
     @Override
@@ -119,6 +83,13 @@ public class TeamAssignmentActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This function receivers list of players and return a division of the players to team
+     * with the optimal amount of rating per team.
+     * @param oldPlayers the players to divide
+     * @param numOfTeams the desired amount of teams to divide to
+     * @return
+     */
     private List<List<StandingsDetail>> divideToEqualTeams(List<StandingsDetail> oldPlayers, int numOfTeams) {
         List<StandingsDetail> players = new ArrayList<>(oldPlayers);
         for (StandingsDetail player : players)
@@ -154,6 +125,10 @@ public class TeamAssignmentActivity extends AppCompatActivity {
         return minTeamIndex;
     }
 
+    /**
+     * @param team list of players in StandingDetail
+     * @return the total sum of the players' rating
+     */
     private int teamTotalRating(List<StandingsDetail> team) {
         if (team == null || team.isEmpty())
             return -1;
@@ -163,6 +138,10 @@ public class TeamAssignmentActivity extends AppCompatActivity {
         return totalRating;
     }
 
+    /**
+     * @param players given players as StandingDetail for rating
+     * @return the player with the max rating
+     */
     private StandingsDetail findMaxRatingPlayer(List<StandingsDetail> players){
         StandingsDetail maxPlayer = null;
         if(players == null || players.isEmpty())
@@ -195,18 +174,25 @@ public class TeamAssignmentActivity extends AppCompatActivity {
             playerAssigningAdapter.getOnItemCheckListener().onItemCheck(player, PlayerAssigningAdapter.BLUE_TEAM);
     }*/
 
+    /**
+     * Sets the recycler view of the activity
+     */
     private void setRecyclerView(){
         playerAssignmentRecyclerView = findViewById(R.id.player_assigning_recycler_view);
         playerAssignmentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         playerAssignmentRecyclerView.setHasFixedSize(true);
     }
-
+    /**
+     *  Sets the adapter for the recycler view
+     */
     private void setPlayerAssigningAdapter(){
         playerAssigningAdapter = new PlayerAssigningAdapter();
         playerAssignmentRecyclerView.setAdapter(playerAssigningAdapter);
         playerAssigningAdapter.setContext(this);
     }
-
+    /**
+     * Sets the listener for clicking an player to assign
+     */
     private void setAdapterOnItemClickListener(){
         playerAssigningAdapter.setOnItemCheckListener(new PlayerAssigningAdapter.OnItemCheckListener() {
             @Override
@@ -241,7 +227,10 @@ public class TeamAssignmentActivity extends AppCompatActivity {
         });
     }
 
-    private void setViewModels(){
+    /**
+     * Sets the view model of the standings
+     */
+    private void setViewModel(){
         standingsViewModel = new ViewModelProvider(this, new GroupStandingsViewModelFactory(getApplication(), groupID)).get(GroupStandingsViewModel.class);
         standingsViewModel.getAllStandingsDetail().observe(this, new Observer<List<StandingsDetail>>() {
             @Override
@@ -253,6 +242,52 @@ public class TeamAssignmentActivity extends AppCompatActivity {
                     playersNames.add(standingsDetail.player.getName());
                 }
                 playerAssigningAdapter.setPlayers(players, playersNames);
+            }
+        });
+    }
+
+    /**
+     * Sets FAB for starting the game
+     */
+    private void setRunGameFAB(){
+        FloatingActionButton runGameFAB = findViewById(R.id.run_game_button);
+        runGameFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (redPlayers.isEmpty() || bluePlayers.isEmpty()) {
+                    Toast.makeText(TeamAssignmentActivity.this, "Each team must have at least one player", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Intent startGame = new Intent(TeamAssignmentActivity.this, MatchResultsActivity.class);
+                startGame.putExtra(MatchResultsActivity.EXTRA_RED_PLAYERS, (Serializable) redPlayers);
+                startGame.putExtra(MatchResultsActivity.EXTRA_RED_PLAYERS_NAMES, (Serializable)redPlayersNames);
+                startGame.putExtra(MatchResultsActivity.EXTRA_BLUE_PLAYERS, (Serializable) bluePlayers);
+                startGame.putExtra(MatchResultsActivity.EXTRA_BLUE_PLAYERS_NAMES, (Serializable) bluePlayersNames);
+                startActivityForResult(startGame, RUN_GAME_REQUEST);
+            }
+        });
+    }
+
+    /**
+     * Setting the button the sets the current team to assign to
+     */
+    private void setTeamButton(){
+        teamButton = findViewById(R.id.team_button);
+        teamButton.setText(R.string.red_team_name);
+        teamButton.setBackgroundColor(ContextCompat.getColor(this, R.color.redTeamColor));
+        teamButton.setTextColor(Color.WHITE);
+        teamButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (teamButton.getText().equals("Red Team")) {
+                    teamButton.setText(R.string.blue_team_name);
+                    teamButton.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.blueTeamColor));
+                    playerAssigningAdapter.setCurrentTeam(PlayerAssigningAdapter.BLUE_TEAM);
+                } else {
+                    teamButton.setText(R.string.red_team_name);
+                    teamButton.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.redTeamColor));
+                    playerAssigningAdapter.setCurrentTeam(PlayerAssigningAdapter.RED_TEAM);
+                }
             }
         });
     }

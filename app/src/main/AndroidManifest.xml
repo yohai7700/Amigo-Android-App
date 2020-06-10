@@ -47,6 +47,11 @@
             android:screenOrientation="landscape"
             android:parentActivityName=".Activities.GroupListActivity"
             tools:ignore="LockedOrientationActivity" />
+        <receiver android:name=".BroadcastReceiver.LowBatteryBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BATTERY_LOW"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

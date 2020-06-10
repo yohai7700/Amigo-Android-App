@@ -27,6 +27,10 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+/**
+ * This activity adds a player to group.
+ * @author Yohai Mazuz
+ */
 public class AddStandingsActivity extends AppCompatActivity {
     public static final String EXTRA_GROUP_ID = "com.example.amigo.Activities.AddStandingsActivity.EXTRA_GROUP_ID";
     public static final int AMOUNT_OF_COLUMNS = 3, ADD_PLAYER_REQUEST = 1, DEFAULT_PLAYER_PHOTO = R.drawable.stock_profile;

@@ -23,8 +23,15 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+/**
+ * This activity displays the list of groups.
+ * @author Yohai Mazuz
+ */
 public class GroupListActivity extends AppCompatActivity {
 
+    private RecyclerView groupListRecyclerView;
+    private GroupAdapter groupAdapter;
+    private FloatingActionButton buttonAddGroup;
     private GroupViewModel groupViewModel;
     private boolean shouldAskOnDelete = true;
 
@@ -33,27 +40,65 @@ public class GroupListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_list);
         setTitle("Groups List");
-        //region sets FAB - FAB for adding a group.
-        FloatingActionButton buttonAddGroup = findViewById(R.id.add_group_button);
-        buttonAddGroup.setOnClickListener(new View.OnClickListener() {
+        setButtonAddGroup();
+        setGroupAdapter();
+        setGroupsRecyclerView();
+        setGroupViewModel();
+        setSwipeHelper();
+        setAdapterOnLongClickListener();
+        setAdapterOnClickListener();
+    }
+
+    /**
+     * Sets the on click which opens the group
+     */
+    private void setAdapterOnClickListener(){
+        groupAdapter.setOnClickListener(new GroupAdapter.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(GroupListActivity.this, AddEditGroupActivity.class);
+            public void onItemClick(Group group) {
+                Intent intent = new Intent(GroupListActivity.this, GroupStandingsActivity.class);
+                intent.putExtra(GroupStandingsActivity.EXTRA_GROUP_ID, group.id);
+                intent.putExtra(GroupStandingsActivity.EXTRA_GROUP_TITLE, group.getTitle());
                 startActivity(intent);
             }
         });
-        //endregion
-        //region sets RecyclerView groups
-        RecyclerView groupListRecyclerView = findViewById(R.id.group_list_recycler_view);
+    }
+    /**
+     * Sets the on click which edits the group
+     */
+    private void setAdapterOnLongClickListener(){
+        groupAdapter.setOnLongClickListener(new GroupAdapter.OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(Group group) {
+                Intent intent = new Intent(GroupListActivity.this, AddEditGroupActivity.class);
+                intent.putExtra(AddEditGroupActivity.EXTRA_GROUP_ID, group.id);
+                startActivity(intent);
+            }
+        });
+    }
+
+    /**
+     * Sets recycler view that shows the groups
+     */
+    private void setGroupsRecyclerView(){
+        groupListRecyclerView = findViewById(R.id.group_list_recycler_view);
         groupListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         groupListRecyclerView.setHasFixedSize(true);
-        //endregion
-        //region sets groupAdapter
-        final GroupAdapter groupAdapter = new GroupAdapter();
         groupListRecyclerView.setAdapter(groupAdapter);
+    }
+
+    /**
+     * Sets group adapter
+     */
+    private void setGroupAdapter(){
+        groupAdapter = new GroupAdapter();
         groupAdapter.setContext(this);
-        //endregion
-        //region sets group-ViewModel
+    }
+
+    /**
+     * Sets view model for groups
+     */
+    private void setGroupViewModel(){
         groupViewModel = new ViewModelProvider(this).get(GroupViewModel.class);
         LiveData<List<Group>> groups = groupViewModel.getAllGroups();
         groupViewModel.getAllGroups().observe(this, new Observer<List<Group>>() {
@@ -62,8 +107,26 @@ public class GroupListActivity extends AppCompatActivity {
                 groupAdapter.submitList(groups);
             }
         });
-        //endregion
-        //region sets ItemTouchHelper(delete on swipe)
+    }
+
+    /**
+     * Sets button that adds a new group
+     */
+    private void setButtonAddGroup(){
+        buttonAddGroup = findViewById(R.id.add_group_button);
+        buttonAddGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(GroupListActivity.this, AddEditGroupActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    /**
+     * Sets swipe helper that shows a dialog for asking to delete a group
+     */
+    private void setSwipeHelper(){
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -98,27 +161,5 @@ public class GroupListActivity extends AppCompatActivity {
                     groupViewModel.delete(groupAdapter.getGroupAt(viewHolder.getAdapterPosition()));
             }
         }).attachToRecyclerView(groupListRecyclerView);
-        //endregion
-        //region sets groupAdapter - onLongClickListener(enter group standings)
-        groupAdapter.setOnLongClickListener(new GroupAdapter.OnItemLongClickListener() {
-            @Override
-            public void onItemLongClick(Group group) {
-                Intent intent = new Intent(GroupListActivity.this, AddEditGroupActivity.class);
-                intent.putExtra(AddEditGroupActivity.EXTRA_GROUP_ID, group.id);
-                startActivity(intent);
-            }
-        });
-        //endregion
-        //region sets groupAdapter - onClickListener(edit group)
-        groupAdapter.setOnClickListener(new GroupAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Group group) {
-                Intent intent = new Intent(GroupListActivity.this, GroupStandingsActivity.class);
-                intent.putExtra(GroupStandingsActivity.EXTRA_GROUP_ID, group.id);
-                intent.putExtra(GroupStandingsActivity.EXTRA_GROUP_TITLE, group.getTitle());
-                startActivity(intent);
-            }
-        });
-        //endregion
     }
 }
